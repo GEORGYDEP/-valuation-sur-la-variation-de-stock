@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Évaluation formative — Variation de stock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --correct: #16a34a;
+    --correct-bg: #dcfce7;
+    --incorrect: #dc2626;
+    --incorrect-bg: #fee2e2;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --navy: #0f172a;
+    --warning: #f59e0b;
+    --warning-bg: #fef3c7;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ====== HEADER ====== */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--navy);
+    color: white;
+    padding: 14px 24px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+  }
+  .header-inner {
+    max-width: 920px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .header-title span {
+    font-weight: 400;
+    opacity: 0.6;
+    font-size: 13px;
+    margin-left: 8px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    align-items: center;
+  }
+  .header-meta .email {
+    color: rgba(255,255,255,0.7);
+  }
+  .timer {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(255,255,255,0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    position: sticky;
+    top: 54px;
+    z-index: 99;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* ====== CONTAINER ====== */
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ====== SCREENS ====== */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ====== CARDS ====== */
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.06);
+    margin-bottom: 20px;
+  }
+
+  /* ====== LOGIN ====== */
+  .login-card { max-width: 560px; margin: 40px auto; }
+  .login-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .login-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  .consignes {
+    background: #f1f5f9;
+    border-left: 3px solid var(--primary);
+    padding: 16px 18px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  .consignes ul {
+    margin-left: 18px;
+    margin-top: 8px;
+  }
+  .consignes li { margin-bottom: 4px; }
+  .consignes strong { color: var(--primary-dark); }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .form-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    background: white;
+    transition: all 0.15s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .error-msg {
+    color: var(--incorrect);
+    font-size: 13px;
+    margin-top: 8px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  /* ====== BUTTONS ====== */
+  .btn {
+    padding: 11px 22px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-lg { padding: 13px 26px; font-size: 15px; }
+  .btn-secondary {
+    background: white;
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: #f1f5f9;
+  }
+
+  /* ====== QUESTIONS ====== */
+  .q-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .q-number {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .q-points {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: #f1f5f9;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .q-text {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 22px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ====== QCM OPTIONS ====== */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14.5px;
+  }
+  .option:hover:not(.disabled) {
+    border-color: var(--primary);
+    background: #f8faff;
+  }
+  .option-letter {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+  .option:hover:not(.disabled) .option-letter {
+    background: var(--primary);
+    color: white;
+  }
+  .option.correct {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+  }
+  .option.correct .option-letter {
+    background: var(--correct);
+    color: white;
+  }
+  .option.incorrect {
+    border-color: var(--incorrect);
+    background: var(--incorrect-bg);
+  }
+  .option.incorrect .option-letter {
+    background: var(--incorrect);
+    color: white;
+  }
+  .option.disabled { cursor: not-allowed; opacity: 0.65; }
+
+  /* ====== CONTEXT BLOCK ====== */
+  .context {
+    background: #f8faff;
+    border-left: 4px solid var(--primary);
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .context strong { color: var(--primary-dark); }
+  .context .data-list {
+    margin-top: 10px;
+    padding-left: 18px;
+  }
+  .context .data-list li {
+    margin-bottom: 3px;
+  }
+  .context-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: var(--navy);
+  }
+
+  /* ====== NUMERIC INPUT ====== */
+  .numeric-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 300px;
+  }
+  .numeric-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    text-align: right;
+  }
+  .numeric-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .unit { color: var(--text-muted); font-weight: 600; }
+  .hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* ====== JOURNAL SELECT ====== */
+  .journal-wrap {
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .journal-label {
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .journal-select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+  }
+  .journal-select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  /* ====== ENTRY TABLE ====== */
+  .entry-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+  .entry-table th {
+    background: #f1f5f9;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+  }
+  .entry-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .entry-table tr:last-child td {
+    border-bottom: none;
+  }
+  .entry-table tr.credit-line td:first-child {
+    padding-left: 28px;
+    position: relative;
+  }
+  .entry-table tr.credit-line td:first-child::before {
+    content: "à";
+    position: absolute;
+    left: 10px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .account-input {
+    width: 100px;
+    padding: 7px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+  }
+  .account-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .amount-input {
+    width: 100%;
+    max-width: 140px;
+    padding: 7px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    text-align: right;
+  }
+  .amount-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .amount-input:disabled {
+    background: #f1f5f9;
+    color: #cbd5e1;
+  }
+  .entry-table tr.error-row {
+    background: var(--incorrect-bg);
+  }
+  .entry-table .error-cell {
+    background: var(--incorrect-bg);
+  }
+
+  /* ====== RESULT STATEMENT (Compte de résultat) ====== */
+  .result-statement {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .result-statement-header {
+    background: var(--navy);
+    color: white;
+    padding: 10px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .result-col {
+    background: white;
+  }
+  .result-col + .result-col {
+    border-left: 1px solid var(--border);
+  }
+  .result-col-header {
+    background: #f1f5f9;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 14px;
+    font-size: 13.5px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-row.total-row {
+    font-weight: 700;
+    background: #f8faff;
+    border-top: 2px solid var(--border);
+  }
+  .result-row .label { color: var(--text); }
+  .result-row .value {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text);
+  }
+  .result-row .total-input {
+    width: 130px;
+    padding: 5px 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    text-align: right;
+    font-weight: 700;
+  }
+  .result-row .total-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+  }
+  .result-row.error-field .total-input {
+    border-color: var(--incorrect);
+    background: var(--incorrect-bg);
+  }
+
+  .final-result-row {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8faff;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    font-weight: 700;
+  }
+  .final-result-row .final-input {
+    width: 160px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    text-align: right;
+    font-weight: 700;
+  }
+  .final-result-row .final-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .final-result-row.error-field .final-input {
+    border-color: var(--incorrect);
+    background: var(--incorrect-bg);
+  }
+
+  /* ====== RECAP BLOCK (rappel réponses précédentes) ====== */
+  .recap-block {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+  }
+  .recap-title {
+    font-weight: 700;
+    color: #92400e;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+  .recap-subtitle {
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .recap-journal {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .recap-entry-table, .recap-totals-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    font-size: 12.5px;
+  }
+  .recap-entry-table th {
+    background: #fef3c7;
+    color: #78350f;
+    padding: 5px 8px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .recap-entry-table td, .recap-totals-table td {
+    padding: 5px 8px;
+    border-top: 1px solid #fef3c7;
+  }
+  .recap-entry-table th.right, .recap-entry-table td.right, .recap-totals-table td.val {
+    text-align: right;
+  }
+  .recap-entry-table td.mono, .recap-totals-table td.val {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .recap-entry-table td.acc {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    width: 80px;
+  }
+  .recap-entry-table td.lib {
+    color: var(--text-muted);
+  }
+  .recap-totals-table td:first-child {
+    color: var(--text-muted);
+  }
+  .recap-totals-table td.val {
+    font-weight: 600;
+    width: 150px;
+  }
+  .recap-empty {
+    background: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 12.5px;
+  }
+
+  /* ====== ACTIONS ====== */
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .attempts-info {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .feedback {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--correct-bg);
+    color: var(--correct);
+    border: 1px solid var(--correct);
+  }
+  .feedback.incorrect {
+    background: var(--incorrect-bg);
+    color: var(--incorrect);
+    border: 1px solid var(--incorrect);
+  }
+  .feedback.warning {
+    background: var(--warning-bg);
+    color: #92400e;
+    border: 1px solid var(--warning);
+  }
+
+  /* ====== TRANSITION ====== */
+  .transition-card {
+    text-align: center;
+    padding: 48px 32px;
+  }
+  .transition-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  .transition-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .transition-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    font-size: 15px;
+  }
+  .score-preview {
+    display: inline-flex;
+    gap: 8px;
+    align-items: baseline;
+    background: #f1f5f9;
+    padding: 16px 28px;
+    border-radius: 12px;
+    margin-bottom: 28px;
+  }
+  .score-preview-value {
+    font-size: 36px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--primary);
+  }
+  .score-preview-max {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .score-preview-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* ====== SUMMARY ====== */
+  .summary-card {
+    text-align: center;
+    padding: 48px 32px;
+  }
+  .summary-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .summary-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+  .summary-score {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 48px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-radius: 16px;
+    margin-bottom: 28px;
+  }
+  .summary-total {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+  }
+  .summary-max {
+    color: var(--text-muted);
+    font-size: 20px;
+  }
+  .summary-details {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .summary-detail {
+    text-align: center;
+  }
+  .summary-detail-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .summary-detail-value {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .summary-time {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 20px 16px 60px; }
+    .card { padding: 22px; }
+    .q-text { font-size: 15.5px; }
+    .result-grid { grid-template-columns: 1fr; }
+    .result-col + .result-col {
+      border-left: none;
+      border-top: 1px solid var(--border);
+    }
+    .entry-table { font-size: 13px; }
+    .account-input { width: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-title">
+      Évaluation formative <span>Variation de stock — 6TQ Co</span>
+    </div>
+    <div class="header-meta">
+      <span class="email" id="headerEmail"></span>
+      <span class="timer" id="timer">00:00</span>
+    </div>
+  </div>
+</div>
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<!-- ====== CONTAINER ====== -->
+<div class="container">
+
+  <!-- ====== SCREEN 1 : LOGIN ====== -->
+  <div class="screen active" id="screen-login">
+    <div class="card login-card">
+      <h1 class="login-title">Évaluation formative</h1>
+      <p class="login-subtitle">Variation de stock — 6TQ Comptabilité</p>
+
+      <div class="consignes">
+        <strong>Avant de commencer :</strong>
+        <ul>
+          <li>L'évaluation comporte <strong>deux volets</strong> : un quiz théorique (10 questions, 10 points) et un exercice pratique (30 points).</li>
+          <li>Durée indicative : <strong>45 minutes</strong>. Un chronomètre s'affiche en haut de l'écran.</li>
+          <li>Les questions du quiz admettent <strong>une seule tentative</strong>.</li>
+          <li>Les questions de l'exercice admettent <strong>trois tentatives maximum</strong>. Les erreurs éventuelles seront signalées sans vous donner la bonne réponse.</li>
+          <li>Vous pouvez <strong>passer à la question suivante</strong> même sans avoir trouvé la bonne réponse.</li>
+          <li>Une évaluation <strong>formative</strong> : aucune correction ne vous sera communiquée pendant l'épreuve.</li>
+        </ul>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="emailInput">Adresse email scolaire</label>
+        <input type="email" id="emailInput" class="form-input" placeholder="prenom.nom@eleve.istlm.be" autocomplete="email">
+        <div class="error-msg" id="emailError"></div>
+      </div>
+
+      <button class="btn btn-lg" id="startBtn" style="width: 100%; margin-top: 8px;">Commencer l'évaluation</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 2 : ALREADY COMPLETED ====== -->
+  <div class="screen" id="screen-completed">
+    <div class="card" style="text-align: center; padding: 48px;">
+      <div style="font-size: 48px; margin-bottom: 12px;">🔒</div>
+      <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Évaluation déjà réalisée</h2>
+      <p style="color: var(--text-muted);">Cette évaluation a déjà été soumise avec votre adresse email. Contactez votre professeur si vous pensez qu'il s'agit d'une erreur.</p>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 3 : QUIZ ====== -->
+  <div class="screen" id="screen-quiz">
+    <div class="card" id="quizCard">
+      <!-- Rendu dynamique -->
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 4 : TRANSITION ====== -->
+  <div class="screen" id="screen-transition">
+    <div class="card transition-card">
+      <div class="transition-icon">✓</div>
+      <h2 class="transition-title">Quiz terminé !</h2>
+      <p class="transition-subtitle">Place à l'exercice pratique.</p>
+      <div class="score-preview">
+        <div>
+          <span class="score-preview-label">Score quiz</span>
+          <div>
+            <span class="score-preview-value" id="transitionScore">0</span>
+            <span class="score-preview-max">/10</span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <button class="btn btn-lg" id="startExBtn">Commencer l'exercice →</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 5 : EXERCISE ====== -->
+  <div class="screen" id="screen-exercise">
+    <div class="card" id="exCard">
+      <!-- Rendu dynamique -->
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 6 : SUMMARY ====== -->
+  <div class="screen" id="screen-summary">
+    <div class="card summary-card">
+      <h2 class="summary-title">Évaluation terminée</h2>
+      <p class="summary-subtitle">Merci pour votre travail. Vos résultats ont été enregistrés.</p>
+
+      <div class="summary-score">
+        <div>
+          <div class="summary-total">
+            <span id="summaryTotal">0</span><span class="summary-max">/40</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-details">
+        <div class="summary-detail">
+          <div class="summary-detail-label">Quiz</div>
+          <div class="summary-detail-value"><span id="summaryQuiz">0</span>/10</div>
+        </div>
+        <div class="summary-detail">
+          <div class="summary-detail-label">Exercice</div>
+          <div class="summary-detail-value"><span id="summaryEx">0</span>/30</div>
+        </div>
+      </div>
+
+      <div class="summary-time">
+        ⏱ Temps total : <span id="summaryTime">00:00</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ========== CONFIG ========== */
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzff9KEtrF9aH2ajzRvpPmePXDjOzLeOjrqpxJRO5uSKsfAMlY24A39eWO2tXBvO-eu/exec',
+  APP_NAME: 'Variation de stock',
+  NB_QUIZ: 10,
+  NB_EXERCICES: 8,
+  POINTS_MAX: 40,
+  MAX_ATTEMPTS: 3
+};
+
+const ALLOWED_DOMAINS = ['@eleve.istlm.be', '@istlm.org'];
+
+/* ========== QUIZ DATA ========== */
+const QUIZ = [
+  {
+    q: "Pourquoi faut-il comptabiliser une écriture de variation de stock en fin d'exercice ?",
+    options: [
+      "Pour que le compte de stock reflète la réalité de l'inventaire et pour influencer correctement le résultat de l'exercice.",
+      "Pour enregistrer les achats de l'année dans le compte de stock.",
+      "Pour comptabiliser les ventes de marchandises réalisées durant l'exercice.",
+      "Pour payer les fournisseurs à qui l'entreprise doit encore de l'argent."
+    ],
+    correct: 0
+  },
+  {
+    q: "Quelle est la formule correcte pour calculer la variation de stock ?",
+    options: [
+      "Stock initial − Stock final = Variation de stock",
+      "Stock final − Stock initial = Variation de stock",
+      "Achats − Ventes = Variation de stock",
+      "Stock initial + Entrées − Sorties = Variation de stock"
+    ],
+    correct: 0
+  },
+  {
+    q: "Si le stock initial est INFÉRIEUR au stock final, quelle est la conséquence sur les charges de l'exercice ?",
+    options: [
+      "Les charges diminuent car une partie des achats n'a pas été consommée (constitution de stock).",
+      "Les charges augmentent car le stock a coûté plus cher à constituer.",
+      "Les charges restent inchangées, seul le bilan est impacté.",
+      "Les charges deviennent automatiquement nulles."
+    ],
+    correct: 0
+  },
+  {
+    q: "Lorsqu'on comptabilise la variation de stock des matières premières, fournitures ou marchandises, quel compte mouvemente-t-on en contrepartie du compte de stock ?",
+    options: [
+      "Le compte 609 « Variation de stock ».",
+      "Le compte 71 « Variation de stock ».",
+      "Le compte 604 « Achats de marchandises ».",
+      "Le compte 44 « Fournisseurs »."
+    ],
+    correct: 0
+  },
+  {
+    q: "Lorsqu'on comptabilise la variation de stock des produits finis ou des en-cours de fabrication, quel compte mouvemente-t-on en contrepartie du compte de stock ?",
+    options: [
+      "Le compte 71 « Variation de stock ».",
+      "Le compte 609 « Variation de stock ».",
+      "Le compte 70 « Chiffre d'affaires ».",
+      "Le compte 6000 « Achats de matières premières »."
+    ],
+    correct: 0
+  },
+  {
+    q: "Pourquoi le compte 71 « Variation de stock » est-il un compte de produit alors que le compte 609 est un compte de charge ?",
+    options: [
+      "Parce que les produits finis résultent de la production de l'entreprise, tandis que les matières premières et marchandises sont achetées.",
+      "Parce que les produits finis sont toujours vendus plus cher que les matières premières.",
+      "Parce que les comptes de produit sont toujours en classe 7 par convention administrative.",
+      "Parce que le compte 609 n'existe que dans les grandes entreprises."
+    ],
+    correct: 0
+  },
+  {
+    q: "Lorsque le stock de matières premières DIMINUE au cours de l'exercice, comment l'écriture est-elle passée ?",
+    options: [
+      "Débit : Variation de stock (609) — Crédit : Stocks matières premières (3000).",
+      "Débit : Stocks matières premières (3000) — Crédit : Variation de stock (609).",
+      "Débit : Achats matières premières (6000) — Crédit : Stocks (3000).",
+      "Débit : Variation de stock (71) — Crédit : Produits finis (3300)."
+    ],
+    correct: 0
+  },
+  {
+    q: "Lorsque le stock de produits finis AUGMENTE au cours de l'exercice, comment l'écriture est-elle passée ?",
+    options: [
+      "Débit : Stocks produits finis (3300) — Crédit : Variation de stock (71).",
+      "Débit : Variation de stock (71) — Crédit : Stocks produits finis (3300).",
+      "Débit : Stocks produits finis (3300) — Crédit : Ventes (70).",
+      "Débit : Variation de stock (609) — Crédit : Stocks produits finis (3300)."
+    ],
+    correct: 0
+  },
+  {
+    q: "Que se passerait-il si l'entreprise OUBLIAIT de comptabiliser la variation de stock en fin d'exercice ?",
+    options: [
+      "Le résultat de l'exercice serait faussé et le bilan ne refléterait pas la valeur réelle des stocks.",
+      "Rien, la variation de stock est facultative pour les PME.",
+      "L'entreprise paierait moins de TVA à l'État.",
+      "Les comptes fournisseurs seraient automatiquement soldés."
+    ],
+    correct: 0
+  },
+  {
+    q: "Parmi les comptes de stock suivants, lequel NE PEUT PAS faire l'objet d'une écriture de variation de stock via le compte de charge 609 ?",
+    options: [
+      "3300 Produits finis.",
+      "3000 Matières premières.",
+      "3100 Fournitures.",
+      "3400 Marchandises."
+    ],
+    correct: 0
+  }
+];
+
+/* ========== EXERCISE CONTEXT ========== */
+const EXERCISE_CONTEXT = `
+<div class="context-title">Entreprise « Moulin » — Relevé de stocks au 31/12/N</div>
+Le service comptable vous a chargé(e) de traiter les écritures de variation de stock.
+<br><br>
+<strong>Stocks en début d'année N (1/01/N) :</strong>
+<ul class="data-list">
+  <li>Stock matières premières : <span class="mono">15 032,00 €</span></li>
+  <li>Stock produits finis : <span class="mono">50 140,00 €</span></li>
+</ul>
+<strong>Stocks en fin d'année N (31/12/N) :</strong>
+<ul class="data-list">
+  <li>Stock matières premières : <span class="mono">10 550,00 €</span></li>
+  <li>Stock produits finis : <span class="mono">95 099,00 €</span></li>
+</ul>
+<strong>Compte de résultat au 31/12/N (avant variations de stock) :</strong>
+<ul class="data-list">
+  <li>Achats matières premières : <span class="mono">55 650,00 €</span></li>
+  <li>Services et biens divers : <span class="mono">32 700,00 €</span></li>
+  <li>Rémunérations : <span class="mono">77 365,00 €</span></li>
+  <li>Amortissements : <span class="mono">17 000,00 €</span></li>
+  <li>Charges financières : <span class="mono">1 850,00 €</span></li>
+  <li>Ventes : <span class="mono">220 300,00 €</span></li>
+  <li>Produits financiers : <span class="mono">250,00 €</span></li>
+</ul>
+`;
+
+/* ========== EXERCISE DATA ========== */
+/*
+  Calculs (référence interne) :
+  - Variation MP : SI - SF = 15032 - 10550 = 4482 (stock diminué → charge)
+  - Variation PF : SI - SF = 50140 - 95099 = -44959 (stock augmenté)
+
+  Écritures :
+  - MP (diminution) :
+      6090 Variation de stock MP  4482 D
+      3000 Stocks MP              4482 C
+  - PF (augmentation) :
+      3300 Stocks PF             44959 D
+      7130 Variation de stock PF 44959 C
+
+  Compte de résultat après variations :
+  Charges :
+    Achats MP          55 650
+    Variation stocks MP 4 482 (charge supplémentaire car stock diminué)
+    SBD                32 700
+    Rémunérations      77 365
+    Amortissements     17 000
+    Charges financières 1 850
+    TOTAL             189 047
+
+  Produits :
+    Ventes            220 300
+    Variation stocks PF 44 959 (produit supplémentaire car stock augmenté)
+    Produits financiers    250
+    TOTAL             265 509
+
+  Résultat = 265 509 - 189 047 = 76 462 €
+*/
+
+const EXERCISES = [
+  // EX 1.1 — QCM (3 pts)
+  {
+    id: 'EX1.1',
+    partie: 'Exercice 1 — Question théorique',
+    type: 'qcm',
+    context: EXERCISE_CONTEXT,
+    q: "Question théorique appliquée : pourquoi l'entreprise « Moulin » doit-elle comptabiliser une écriture de variation de stock au 31/12/N ?",
+    options: [
+      "Pour corriger la valeur comptable des stocks (classe 3) afin qu'elle corresponde à l'inventaire réel, et pour refléter correctement dans le résultat la partie des achats consommée durant l'exercice.",
+      "Pour comptabiliser rétroactivement les ventes non enregistrées durant l'année.",
+      "Pour annuler automatiquement les achats de matières premières qui n'ont pas été payés.",
+      "Pour éviter de payer l'impôt des sociétés sur les stocks restants."
+    ],
+    correct: 0,
+    points: 3
+  },
+
+  // EX 1.2 — Calcul variation MP (2 pts)
+  {
+    id: 'EX1.2',
+    partie: 'Exercice 1 — Calcul variation de stock MP',
+    type: 'numeric',
+    context: EXERCISE_CONTEXT,
+    q: "Calculez la variation de stock de matières premières pour l'année N.",
+    hint: "Appliquez la formule : Stock initial − Stock final.",
+    answer: 4482,
+    tolerance: 0.50,
+    acceptAbsolute: true,
+    unit: '€',
+    points: 2
+  },
+
+  // EX 1.3 — Calcul variation PF (2 pts)
+  {
+    id: 'EX1.3',
+    partie: 'Exercice 1 — Calcul variation de stock PF',
+    type: 'numeric',
+    context: EXERCISE_CONTEXT,
+    q: "Calculez la variation de stock de produits finis pour l'année N.",
+    hint: "Appliquez la formule : Stock initial − Stock final.",
+    answer: 44959,
+    tolerance: 0.50,
+    acceptAbsolute: true,
+    unit: '€',
+    points: 2
+  },
+
+  // EX 1.4 — Écriture variation MP (5 pts)
+  {
+    id: 'EX1.4',
+    partie: 'Exercice 1 — Écriture variation MP (31/12/N)',
+    type: 'entry',
+    context: EXERCISE_CONTEXT,
+    q: "Enregistrez l'écriture de variation de stock des matières premières au 31/12/N dans le journal approprié.",
+    journal: 'JOD',
+    expectedLines: [
+      { account: '6090', debit: 4482, credit: 0 },
+      { account: '3000', debit: 0, credit: 4482 }
+    ],
+    points: 5
+  },
+
+  // EX 1.5 — Écriture variation PF (5 pts)
+  {
+    id: 'EX1.5',
+    partie: 'Exercice 1 — Écriture variation PF (31/12/N)',
+    type: 'entry',
+    context: EXERCISE_CONTEXT,
+    q: "Enregistrez l'écriture de variation de stock des produits finis au 31/12/N dans le journal approprié.",
+    journal: 'JOD',
+    expectedLines: [
+      { account: '3300', debit: 44959, credit: 0 },
+      { account: '7130', debit: 0, credit: 44959 }
+    ],
+    points: 5
+  },
+
+  // EX 1.6 — Total charges après variation (4 pts)
+  {
+    id: 'EX1.6',
+    partie: 'Exercice 1 — Total des charges',
+    type: 'numeric',
+    context: EXERCISE_CONTEXT,
+    showStudentRecap: true,
+    q: "Après comptabilisation des variations de stock, déterminez le TOTAL DES CHARGES dans le compte de résultat au 31/12/N.",
+    hint: "Additionnez tous les comptes de charge, variation de stock des matières premières incluse.",
+    answer: 189047,
+    tolerance: 0.50,
+    unit: '€',
+    points: 4
+  },
+
+  // EX 1.7 — Total produits après variation (4 pts)
+  {
+    id: 'EX1.7',
+    partie: 'Exercice 1 — Total des produits',
+    type: 'numeric',
+    context: EXERCISE_CONTEXT,
+    showStudentRecap: true,
+    q: "Après comptabilisation des variations de stock, déterminez le TOTAL DES PRODUITS dans le compte de résultat au 31/12/N.",
+    hint: "Additionnez tous les comptes de produit, variation de stock des produits finis incluse.",
+    answer: 265509,
+    tolerance: 0.50,
+    unit: '€',
+    points: 4
+  },
+
+  // EX 1.8 — Résultat comptable (5 pts)
+  {
+    id: 'EX1.8',
+    partie: 'Exercice 1 — Résultat comptable',
+    type: 'numeric',
+    context: EXERCISE_CONTEXT,
+    showStudentRecap: true,
+    showTotalsRecap: true,
+    q: "Déterminez le résultat comptable de l'entreprise « Moulin » pour l'année N.",
+    hint: "Indiquez un montant positif pour un bénéfice ou négatif pour une perte.",
+    answer: 76462,
+    tolerance: 0.50,
+    unit: '€',
+    points: 5
+  }
+];
+
+/* ========== SHUFFLE (v2 requirement) ========== */
+function shuffleOptions(arr, correctIndex) {
+  const correctText = arr[correctIndex];
+  const shuffled = arr.slice();
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return { options: shuffled, correct: shuffled.indexOf(correctText) };
+}
+QUIZ.forEach(q => {
+  const s = shuffleOptions(q.options, q.correct);
+  q.options = s.options;
+  q.correct = s.correct;
+});
+EXERCISES.forEach(ex => {
+  if (ex.type === 'qcm' && ex.options && ex.options.length > 1) {
+    const s = shuffleOptions(ex.options, ex.correct);
+    ex.options = s.options;
+    ex.correct = s.correct;
+  }
+});
+
+/* ========== STATE ========== */
+const STATE = {
+  email: '',
+  classe: '',
+  session: '',
+  timerInterval: null,
+  startTime: null,
+  elapsed: 0,
+  currentQuiz: 0,
+  currentEx: 0,
+  quizPoints: 0,
+  exPoints: 0,
+  quizAnswered: Array(QUIZ.length).fill(false),
+  exAnswered: Array(EXERCISES.length).fill(false),
+  exAttempts: Array(EXERCISES.length).fill(0),
+  exHistory: {}, // stocke les réponses élèves par id : { 'EX1.2': {value: '4482', type: 'numeric'}, 'EX1.4': {journal:'JOD', lines:[...]}, ... }
+  questionStartTime: 0
+};
+
+/* ========== UTILS ========== */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60).toString().padStart(2, '0');
+  const s = Math.floor(sec % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function updateTimer() {
+  if (!STATE.startTime) return;
+  STATE.elapsed = Math.floor((Date.now() - STATE.startTime) / 1000);
+  document.getElementById('timer').textContent = formatTime(STATE.elapsed);
+}
+
+function updateProgress() {
+  const totalQ = QUIZ.length + EXERCISES.length;
+  const answered = STATE.quizAnswered.filter(Boolean).length
+                 + STATE.exAnswered.filter(Boolean).length;
+  const pct = (answered / totalQ) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function parseNumber(str) {
+  if (typeof str !== 'string') str = String(str);
+  const cleaned = str.trim().replace(/\s/g, '').replace(',', '.');
+  if (cleaned === '') return NaN;
+  return parseFloat(cleaned);
+}
+
+function validateEmail(email) {
+  const lower = email.toLowerCase().trim();
+  const hasAt = /\S+@\S+\.\S+/.test(lower);
+  if (!hasAt) return { ok: false, msg: "Format d'email invalide." };
+  const domainOk = ALLOWED_DOMAINS.some(d => lower.endsWith(d));
+  if (!domainOk) return { ok: false, msg: "Email non autorisé. Utilisez votre adresse scolaire." };
+  return { ok: true, email: lower };
+}
+
+/* ========== JSONP / POST ========== */
+function jsonp(params) {
+  return new Promise((resolve, reject) => {
+    const cbName = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    window[cbName] = function(data) {
+      resolve(data);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
+    const qs = Object.entries(params)
+      .map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+    const script = document.createElement('script');
+    script.src = `${CONFIG.SCRIPT_URL}?callback=${cbName}&${qs}`;
+    script.onerror = () => {
+      reject(new Error('Erreur réseau'));
+      delete window[cbName];
+    };
+    document.body.appendChild(script);
+    // Timeout de sécurité
+    setTimeout(() => {
+      if (window[cbName]) {
+        reject(new Error('Timeout'));
+        delete window[cbName];
+      }
+    }, 15000);
+  });
+}
+
+function postData(payload) {
+  return fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.error('POST error', err));
+}
+
+/* ========== SUBMIT ANSWER TO SHEET ========== */
+// Format aligné sur l'application de référence « Provisions » (snake_case côté Apps Script)
+function submitAnswer({volet, partie, question, reponseEleve, reponseCorrecte, points, pointsMax, tentative, tempsSec}) {
+  const payload = {
+    action: 'submit_answer',
+    email: STATE.email,
+    classe: STATE.classe,
+    application: CONFIG.APP_NAME,
+    volet: volet,
+    partie: partie,
+    question: question,
+    reponse_eleve: reponseEleve,
+    reponse_correcte: reponseCorrecte,
+    points: points,
+    points_max: pointsMax,
+    tentative: tentative,
+    temps_secondes: tempsSec,
+    session: STATE.session
+  };
+  postData(payload);
+}
+
+/* ========== LOGIN ========== */
+document.getElementById('startBtn').addEventListener('click', async () => {
+  const emailInput = document.getElementById('emailInput');
+  const errorEl = document.getElementById('emailError');
+  const btn = document.getElementById('startBtn');
+
+  const val = validateEmail(emailInput.value);
+  if (!val.ok) {
+    errorEl.textContent = val.msg;
+    errorEl.classList.add('show');
+    return;
+  }
+  errorEl.classList.remove('show');
+  btn.disabled = true;
+  btn.textContent = 'Vérification…';
+
+  try {
+    // 1. Check email
+    const r1 = await jsonp({ action: 'check_email', email: val.email });
+    if (!r1.found) {
+      errorEl.textContent = "Email non enregistré. Contactez votre professeur.";
+      errorEl.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = "Commencer l'évaluation";
+      return;
+    }
+    STATE.email = val.email;
+    STATE.classe = r1.classe || '';
+
+    // 2. Check access
+    const r2 = await jsonp({ action: 'check_access', email: val.email, app: CONFIG.APP_NAME });
+    if (r2.status === 'completed') {
+      showScreen('screen-completed');
+      return;
+    }
+
+    // 3. Start eval
+    await jsonp({ action: 'start_eval', email: val.email, app: CONFIG.APP_NAME });
+
+    // 4. Register app
+    postData({
+      action: 'register_app',
+      application: CONFIG.APP_NAME,
+      nb_quiz: CONFIG.NB_QUIZ,
+      nb_exercices: CONFIG.NB_EXERCICES,
+      points_max: CONFIG.POINTS_MAX
+    });
+
+    // 5. Start session
+    STATE.session = new Date().toISOString();
+    STATE.startTime = Date.now();
+    STATE.timerInterval = setInterval(updateTimer, 500);
+    document.getElementById('headerEmail').textContent = val.email;
+
+    // 6. Show quiz
+    showScreen('screen-quiz');
+    renderQuiz();
+
+  } catch (err) {
+    console.error(err);
+    // Mode dégradé : on continue quand même (utile pour tests locaux)
+    STATE.email = val.email;
+    STATE.classe = 'DEV';
+    STATE.session = new Date().toISOString();
+    STATE.startTime = Date.now();
+    STATE.timerInterval = setInterval(updateTimer, 500);
+    document.getElementById('headerEmail').textContent = val.email + ' (offline)';
+    showScreen('screen-quiz');
+    renderQuiz();
+  }
+});
+
+// Entrée dans le champ email = soumission
+document.getElementById('emailInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('startBtn').click();
+});
+
+/* ========== QUIZ RENDERING ========== */
+function renderQuiz() {
+  const i = STATE.currentQuiz;
+  if (i >= QUIZ.length) {
+    // Fin du quiz
+    submitAnswer({
+      volet: 'Quiz',
+      partie: 'TOTAL — Quiz',
+      question: '',
+      reponseEleve: '',
+      reponseCorrecte: '',
+      points: STATE.quizPoints,
+      pointsMax: 10,
+      tentative: 1,
+      tempsSec: STATE.elapsed
+    });
+    document.getElementById('transitionScore').textContent = STATE.quizPoints;
+    showScreen('screen-transition');
+    return;
+  }
+  const q = QUIZ[i];
+  STATE.questionStartTime = Date.now();
+  const card = document.getElementById('quizCard');
+  card.innerHTML = `
+    <div class="q-header">
+      <span class="q-number">Quiz — Question ${i+1} / ${QUIZ.length}</span>
+      <span class="q-points">1 point</span>
+    </div>
+    <div class="q-text">${q.q}</div>
+    <div class="options" id="quizOpts">
+      ${q.options.map((opt, idx) => `
+        <div class="option" data-idx="${idx}">
+          <div class="option-letter">${String.fromCharCode(65 + idx)}</div>
+          <div class="option-text">${opt}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="feedback" id="quizFeedback"></div>
+    <div class="actions" style="justify-content: flex-end;">
+      <button class="btn btn-secondary" id="quizNextBtn" style="display:none;">Question suivante →</button>
+    </div>
+  `;
+  document.querySelectorAll('#quizOpts .option').forEach(opt => {
+    opt.addEventListener('click', () => handleQuizAnswer(parseInt(opt.dataset.idx)));
+  });
+  document.getElementById('quizNextBtn').addEventListener('click', () => {
+    STATE.currentQuiz++;
+    renderQuiz();
+  });
+  updateProgress();
+}
+
+function handleQuizAnswer(idx) {
+  const q = QUIZ[STATE.currentQuiz];
+  const opts = document.querySelectorAll('#quizOpts .option');
+  const correct = idx === q.correct;
+  const tempsSec = Math.floor((Date.now() - STATE.questionStartTime) / 1000);
+
+  opts.forEach(o => {
+    o.classList.add('disabled');
+    o.style.pointerEvents = 'none';
+  });
+
+  if (correct) {
+    opts[idx].classList.add('correct');
+    STATE.quizPoints += 1;
+    const fb = document.getElementById('quizFeedback');
+    fb.className = 'feedback correct show';
+    fb.textContent = '✓ Correct';
+  } else {
+    opts[idx].classList.add('incorrect');
+    const fb = document.getElementById('quizFeedback');
+    fb.className = 'feedback incorrect show';
+    fb.textContent = '✗ Incorrect';
+  }
+
+  STATE.quizAnswered[STATE.currentQuiz] = true;
+  updateProgress();
+
+  submitAnswer({
+    volet: 'Quiz',
+    partie: `Quiz — Q${STATE.currentQuiz + 1}`,
+    question: q.q,
+    reponseEleve: q.options[idx],
+    reponseCorrecte: q.options[q.correct],
+    points: correct ? 1 : 0,
+    pointsMax: 1,
+    tentative: 1,
+    tempsSec: tempsSec
+  });
+
+  document.getElementById('quizNextBtn').style.display = 'inline-block';
+}
+
+/* ========== TRANSITION ========== */
+document.getElementById('startExBtn').addEventListener('click', () => {
+  showScreen('screen-exercise');
+  renderExercise();
+});
+
+/* ========== STUDENT RECAP (rappel des réponses précédentes) ========== */
+function formatMoney(v) {
+  if (v === null || v === undefined || v === '') return '—';
+  const n = typeof v === 'number' ? v : parseFloat(v);
+  if (isNaN(n)) return '—';
+  return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function buildStudentRecap(ex) {
+  let html = '<div class="recap-block">';
+  html += '<div class="recap-title">📋 Rappel de vos écritures et calculs précédents</div>';
+
+  // Rappel des écritures Q4 (MP) et Q5 (PF)
+  const mpEntry = STATE.exHistory['EX1.4'];
+  const pfEntry = STATE.exHistory['EX1.5'];
+
+  html += '<div class="recap-subtitle">Écriture que vous avez saisie pour la variation de stock des matières premières :</div>';
+  html += renderRecapEntry(mpEntry);
+
+  html += '<div class="recap-subtitle">Écriture que vous avez saisie pour la variation de stock des produits finis :</div>';
+  html += renderRecapEntry(pfEntry);
+
+  // Pour Q8 : rappel aussi des totaux Q6 et Q7
+  if (ex.showTotalsRecap) {
+    const totCharges = STATE.exHistory['EX1.6'];
+    const totProduits = STATE.exHistory['EX1.7'];
+    html += '<div class="recap-subtitle">Totaux du compte de résultat que vous avez calculés :</div>';
+    html += '<table class="recap-totals-table">';
+    html += `<tr><td>Total des charges (votre réponse)</td><td class="val">${totCharges && totCharges.value !== null ? formatMoney(totCharges.value) + ' €' : '<em>non renseigné</em>'}</td></tr>`;
+    html += `<tr><td>Total des produits (votre réponse)</td><td class="val">${totProduits && totProduits.value !== null ? formatMoney(totProduits.value) + ' €' : '<em>non renseigné</em>'}</td></tr>`;
+    html += '</table>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function renderRecapEntry(entryData) {
+  if (!entryData || entryData.type !== 'entry') {
+    return '<div class="recap-empty"><em>Vous n\'avez pas complété cette écriture.</em></div>';
+  }
+  const j = entryData.journal || '<em>non sélectionné</em>';
+  let html = `<div class="recap-journal">Journal : <strong>${j}</strong></div>`;
+  html += '<table class="recap-entry-table">';
+  html += '<thead><tr><th>Compte</th><th>Libellé</th><th class="right">Débit</th><th class="right">Crédit</th></tr></thead>';
+  html += '<tbody>';
+  entryData.lines.forEach((line, idx) => {
+    const isCredit = line.credit > 0 || (!line.debit && line.credit === 0 && idx > 0);
+    const prefix = (line.credit > 0) ? 'à  ' : '';
+    html += '<tr>';
+    html += `<td class="acc">${line.account || '—'}</td>`;
+    html += `<td class="lib">${prefix}${accountLabel(line.account)}</td>`;
+    html += `<td class="right mono">${line.debit > 0 ? formatMoney(line.debit) : ''}</td>`;
+    html += `<td class="right mono">${line.credit > 0 ? formatMoney(line.credit) : ''}</td>`;
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function accountLabel(acc) {
+  const labels = {
+    '6090': 'Variation de stock matières premières',
+    '6094': 'Variation de stock matières premières',
+    '3000': 'Stocks matières premières',
+    '3300': 'Stocks produits finis',
+    '7130': 'Variation de stock produits finis'
+  };
+  return labels[acc] || '—';
+}
+
+/* ========== EXERCISE RENDERING ========== */
+function renderExercise() {
+  const i = STATE.currentEx;
+  if (i >= EXERCISES.length) {
+    // Fin des exercices
+    submitAnswer({
+      volet: 'Exercice',
+      partie: 'TOTAL — Exercices',
+      question: '',
+      reponseEleve: '',
+      reponseCorrecte: '',
+      points: STATE.exPoints,
+      pointsMax: 30,
+      tentative: 1,
+      tempsSec: STATE.elapsed
+    });
+    submitAnswer({
+      volet: 'Evaluation',
+      partie: 'TOTAL — Évaluation',
+      question: '',
+      reponseEleve: '',
+      reponseCorrecte: '',
+      points: STATE.quizPoints + STATE.exPoints,
+      pointsMax: CONFIG.POINTS_MAX,
+      tentative: 1,
+      tempsSec: STATE.elapsed
+    });
+    // Marquer comme complété
+    postData({
+      action: 'complete_eval',
+      email: STATE.email,
+      app: CONFIG.APP_NAME
+    });
+    // Afficher résumé
+    document.getElementById('summaryQuiz').textContent = STATE.quizPoints;
+    document.getElementById('summaryEx').textContent = STATE.exPoints;
+    document.getElementById('summaryTotal').textContent = STATE.quizPoints + STATE.exPoints;
+    document.getElementById('summaryTime').textContent = formatTime(STATE.elapsed);
+    if (STATE.timerInterval) clearInterval(STATE.timerInterval);
+    showScreen('screen-summary');
+    return;
+  }
+
+  const ex = EXERCISES[i];
+  STATE.questionStartTime = Date.now();
+  const card = document.getElementById('exCard');
+
+  // Rappel des réponses précédentes (pour Q6, Q7, Q8)
+  let recapHTML = '';
+  if (ex.showStudentRecap) {
+    recapHTML = buildStudentRecap(ex);
+  }
+
+  let body = `
+    <div class="q-header">
+      <span class="q-number">Exercice — Question ${i+1} / ${EXERCISES.length}</span>
+      <span class="q-points">${ex.points} ${ex.points > 1 ? 'points' : 'point'}</span>
+    </div>
+    ${ex.context ? `<div class="context">${ex.context}</div>` : ''}
+    ${recapHTML}
+    <div class="q-text">${ex.q}</div>
+  `;
+
+  if (ex.type === 'qcm') {
+    body += `
+      <div class="options" id="exOpts">
+        ${ex.options.map((opt, idx) => `
+          <div class="option" data-idx="${idx}">
+            <div class="option-letter">${String.fromCharCode(65 + idx)}</div>
+            <div class="option-text">${opt}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (ex.type === 'numeric') {
+    body += `
+      <div class="numeric-wrap">
+        <input type="text" class="numeric-input" id="numInput" placeholder="Montant" inputmode="decimal" autocomplete="off">
+        <span class="unit">${ex.unit || '€'}</span>
+      </div>
+      ${ex.hint ? `<div class="hint">${ex.hint} Utilisez le point ou la virgule comme séparateur décimal.</div>` : `<div class="hint">Utilisez le point ou la virgule comme séparateur décimal.</div>`}
+    `;
+  } else if (ex.type === 'entry') {
+    body += `
+      <div class="journal-wrap">
+        <span class="journal-label">Journal :</span>
+        <select class="journal-select" id="journalSelect">
+          <option value="">— Sélectionner —</option>
+          <option value="JOD">JOD — Journal des Opérations Diverses</option>
+          <option value="JF">JF — Journal Financier</option>
+          <option value="JA">JA — Journal des Achats</option>
+          <option value="JV">JV — Journal des Ventes</option>
+        </select>
+      </div>
+      <table class="entry-table" id="entryTable">
+        <thead>
+          <tr>
+            <th style="width: 120px;">Compte</th>
+            <th>Libellé</th>
+            <th style="width: 140px; text-align: right;">Débit</th>
+            <th style="width: 140px; text-align: right;">Crédit</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ex.expectedLines.map((line, idx) => {
+            const isDebit = line.debit > 0;
+            return `
+              <tr class="${isDebit ? 'debit-line' : 'credit-line'}" data-line="${idx}">
+                <td><input type="text" class="account-input" placeholder="Compte" autocomplete="off"></td>
+                <td style="color: var(--text-muted); font-size: 13px;">—</td>
+                <td><input type="text" class="amount-input debit-input" placeholder="0,00" inputmode="decimal" autocomplete="off" ${isDebit ? '' : 'disabled'}></td>
+                <td><input type="text" class="amount-input credit-input" placeholder="0,00" inputmode="decimal" autocomplete="off" ${isDebit ? 'disabled' : ''}></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+      <div class="hint">Entrez le numéro de compte (ex : 3000) et les montants. Point ou virgule acceptés.</div>
+    `;
+  }
+
+  body += `
+    <div class="feedback" id="exFeedback"></div>
+    <div class="actions">
+      <span class="attempts-info" id="attemptsInfo">Tentative 1 sur ${CONFIG.MAX_ATTEMPTS}</span>
+      <div>
+        <button class="btn btn-secondary" id="exPassBtn">Passer</button>
+        <button class="btn" id="exCheckBtn">Valider</button>
+        <button class="btn" id="exNextBtn" style="display:none;">Question suivante →</button>
+      </div>
+    </div>
+  `;
+
+  card.innerHTML = body;
+
+  // Wire handlers
+  document.getElementById('exCheckBtn').addEventListener('click', () => handleExCheck(ex));
+  document.getElementById('exPassBtn').addEventListener('click', () => handleExPass(ex));
+  document.getElementById('exNextBtn').addEventListener('click', () => {
+    STATE.currentEx++;
+    renderExercise();
+  });
+
+  if (ex.type === 'qcm') {
+    document.querySelectorAll('#exOpts .option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('#exOpts .option').forEach(o => o.style.borderColor = '');
+        opt.style.borderColor = 'var(--primary)';
+        opt.style.background = '#f8faff';
+        opt.dataset.selected = '1';
+      });
+    });
+  }
+
+  updateProgress();
+}
+
+/* ========== EXERCISE VALIDATION ========== */
+function handleExCheck(ex) {
+  STATE.exAttempts[STATE.currentEx]++;
+  const attempt = STATE.exAttempts[STATE.currentEx];
+  const tempsSec = Math.floor((Date.now() - STATE.questionStartTime) / 1000);
+
+  let correct = false;
+  let reponseEleveStr = '';
+  let reponseCorrecteStr = '';
+  let errorDetails = [];
+
+  if (ex.type === 'qcm') {
+    const selected = document.querySelector('#exOpts .option[data-selected="1"]');
+    if (!selected) {
+      const fb = document.getElementById('exFeedback');
+      fb.className = 'feedback warning show';
+      fb.textContent = 'Veuillez sélectionner une réponse avant de valider.';
+      STATE.exAttempts[STATE.currentEx]--;
+      return;
+    }
+    const idx = parseInt(selected.dataset.idx);
+    correct = idx === ex.correct;
+    reponseEleveStr = ex.options[idx];
+    reponseCorrecteStr = ex.options[ex.correct];
+    STATE.exHistory[ex.id] = { type: 'qcm', answer: ex.options[idx] };
+
+  } else if (ex.type === 'numeric') {
+    const input = document.getElementById('numInput');
+    const raw = input.value;
+    const num = parseNumber(raw);
+    if (isNaN(num)) {
+      const fb = document.getElementById('exFeedback');
+      fb.className = 'feedback warning show';
+      fb.textContent = 'Veuillez saisir un montant valide.';
+      STATE.exAttempts[STATE.currentEx]--;
+      return;
+    }
+    if (ex.acceptAbsolute) {
+      // On accepte la valeur positive OU négative correspondant à la bonne réponse absolue
+      correct = Math.abs(Math.abs(num) - Math.abs(ex.answer)) <= (ex.tolerance || 0.01);
+    } else {
+      correct = Math.abs(num - ex.answer) <= (ex.tolerance || 0.01);
+    }
+    reponseEleveStr = raw;
+    reponseCorrecteStr = String(ex.answer);
+    // Stockage pour le rappel dans les questions suivantes
+    STATE.exHistory[ex.id] = { type: 'numeric', value: num, raw: raw };
+
+  } else if (ex.type === 'entry') {
+    // Reset error styling
+    document.querySelectorAll('#entryTable tr').forEach(r => r.classList.remove('error-row'));
+    document.querySelectorAll('#entryTable input').forEach(i => i.classList.remove('error-cell'));
+    document.getElementById('journalSelect').classList.remove('error-cell');
+
+    // Validation journal
+    const journalVal = document.getElementById('journalSelect').value;
+    const journalOk = journalVal === ex.journal;
+    if (!journalOk) errorDetails.push('journal');
+
+    // Validation lignes
+    const rows = document.querySelectorAll('#entryTable tbody tr');
+    const studentLines = [];
+    let allLinesOk = true;
+    rows.forEach((row, idx) => {
+      const expLine = ex.expectedLines[idx];
+      const acc = row.querySelector('.account-input').value.trim();
+      const dInput = row.querySelector('.debit-input');
+      const cInput = row.querySelector('.credit-input');
+      const d = parseNumber(dInput.value) || 0;
+      const c = parseNumber(cInput.value) || 0;
+      studentLines.push(`${acc} D:${d} C:${c}`);
+
+      // Compte
+      const expAcc = expLine.account;
+      const accOk = Array.isArray(expAcc) ? expAcc.includes(acc) : acc === expAcc;
+      // Montants (tolérance 0,50 €)
+      const dOk = Math.abs(d - expLine.debit) <= 0.50;
+      const cOk = Math.abs(c - expLine.credit) <= 0.50;
+
+      if (!accOk || !dOk || !cOk) {
+        allLinesOk = false;
+        row.classList.add('error-row');
+        if (!accOk) row.querySelector('.account-input').classList.add('error-cell');
+        if (!dOk && !dInput.disabled) dInput.classList.add('error-cell');
+        if (!cOk && !cInput.disabled) cInput.classList.add('error-cell');
+      }
+    });
+
+    if (!journalOk) document.getElementById('journalSelect').classList.add('error-cell');
+
+    correct = journalOk && allLinesOk;
+    reponseEleveStr = (journalVal || '-') + ' | ' + studentLines.join(' | ');
+    reponseCorrecteStr = ex.journal + ' | ' + ex.expectedLines.map(l => `${Array.isArray(l.account) ? l.account.join('/') : l.account} D:${l.debit} C:${l.credit}`).join(' | ');
+
+    // Stockage pour le rappel dans les questions suivantes
+    const studentLinesData = [];
+    rows.forEach((row) => {
+      const acc = row.querySelector('.account-input').value.trim();
+      const d = parseNumber(row.querySelector('.debit-input').value) || 0;
+      const c = parseNumber(row.querySelector('.credit-input').value) || 0;
+      studentLinesData.push({ account: acc, debit: d, credit: c });
+    });
+    STATE.exHistory[ex.id] = {
+      type: 'entry',
+      journal: journalVal || '',
+      lines: studentLinesData
+    };
+  }
+
+  // Feedback
+  const fb = document.getElementById('exFeedback');
+  if (correct) {
+    fb.className = 'feedback correct show';
+    fb.textContent = '✓ Correct';
+    // Lock inputs
+    lockExerciseInputs(ex);
+    STATE.exPoints += ex.points;
+    STATE.exAnswered[STATE.currentEx] = true;
+    document.getElementById('exCheckBtn').style.display = 'none';
+    document.getElementById('exPassBtn').style.display = 'none';
+    document.getElementById('exNextBtn').style.display = 'inline-block';
+    document.getElementById('attemptsInfo').textContent = `Validé à la tentative ${attempt}`;
+
+    submitAnswer({
+      volet: 'Exercice',
+      partie: ex.partie || ex.id,
+      question: ex.q,
+      reponseEleve: reponseEleveStr,
+      reponseCorrecte: reponseCorrecteStr,
+      points: ex.points,
+      pointsMax: ex.points,
+      tentative: attempt,
+      tempsSec: tempsSec
+    });
+  } else {
+    // Incorrect
+    submitAnswer({
+      volet: 'Exercice',
+      partie: ex.partie || ex.id,
+      question: ex.q,
+      reponseEleve: reponseEleveStr,
+      reponseCorrecte: reponseCorrecteStr,
+      points: 0,
+      pointsMax: ex.points,
+      tentative: attempt,
+      tempsSec: tempsSec
+    });
+
+    if (attempt >= CONFIG.MAX_ATTEMPTS) {
+      fb.className = 'feedback incorrect show';
+      fb.textContent = '✗ Incorrect. Vous avez utilisé vos 3 tentatives. Passez à la question suivante.';
+      lockExerciseInputs(ex);
+      STATE.exAnswered[STATE.currentEx] = true;
+      document.getElementById('exCheckBtn').style.display = 'none';
+      document.getElementById('exPassBtn').style.display = 'none';
+      document.getElementById('exNextBtn').style.display = 'inline-block';
+      document.getElementById('attemptsInfo').textContent = `Tentatives épuisées (${CONFIG.MAX_ATTEMPTS}/${CONFIG.MAX_ATTEMPTS})`;
+    } else {
+      fb.className = 'feedback incorrect show';
+      if (ex.type === 'entry') {
+        let msg = '✗ Incorrect. ';
+        if (errorDetails.includes('journal')) msg += 'Le journal sélectionné et/ou ';
+        msg += 'certaines cellules contiennent une erreur (surlignées en rouge). Réessayez.';
+        fb.textContent = msg;
+      } else {
+        fb.textContent = `✗ Incorrect. Il vous reste ${CONFIG.MAX_ATTEMPTS - attempt} tentative(s).`;
+      }
+      document.getElementById('attemptsInfo').textContent = `Tentative ${attempt + 1} sur ${CONFIG.MAX_ATTEMPTS}`;
+    }
+  }
+
+  updateProgress();
+}
+
+function lockExerciseInputs(ex) {
+  if (ex.type === 'qcm') {
+    document.querySelectorAll('#exOpts .option').forEach(o => {
+      o.classList.add('disabled');
+      o.style.pointerEvents = 'none';
+    });
+    const selected = document.querySelector('#exOpts .option[data-selected="1"]');
+    if (selected) {
+      const idx = parseInt(selected.dataset.idx);
+      selected.classList.add(idx === ex.correct ? 'correct' : 'incorrect');
+    }
+  } else if (ex.type === 'numeric') {
+    document.getElementById('numInput').disabled = true;
+  } else if (ex.type === 'entry') {
+    document.getElementById('journalSelect').disabled = true;
+    document.querySelectorAll('#entryTable input').forEach(i => i.disabled = true);
+  }
+}
+
+function handleExPass(ex) {
+  const tempsSec = Math.floor((Date.now() - STATE.questionStartTime) / 1000);
+  const attempt = STATE.exAttempts[STATE.currentEx] + 1;
+
+  // Si la question est passée sans réponse, on stocke une entrée vide pour que les questions
+  // suivantes (Q6/Q7/Q8) puissent au moins afficher « non renseigné » dans le rappel.
+  if (!STATE.exHistory[ex.id]) {
+    if (ex.type === 'numeric') {
+      STATE.exHistory[ex.id] = { type: 'numeric', value: null, raw: '' };
+    } else if (ex.type === 'entry') {
+      STATE.exHistory[ex.id] = {
+        type: 'entry',
+        journal: '',
+        lines: ex.expectedLines.map(() => ({ account: '', debit: 0, credit: 0 }))
+      };
+    }
+  }
+
+  submitAnswer({
+    volet: 'Exercice',
+    partie: ex.partie || ex.id,
+    question: ex.q,
+    reponseEleve: '[Passé]',
+    reponseCorrecte: '',
+    points: 0,
+    pointsMax: ex.points,
+    tentative: attempt,
+    tempsSec: tempsSec
+  });
+  STATE.exAnswered[STATE.currentEx] = true;
+  STATE.currentEx++;
+  renderExercise();
+}
+</script>
+</body>
+</html>
