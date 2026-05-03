@@ -855,6 +855,15 @@
     </div>
   </div>
 
+  <!-- ====== SCREEN : LOCKED (Verrou fermé) ====== -->
+  <div class="screen" id="screenLocked">
+    <div class="card" style="text-align: center; padding: 48px;">
+      <div style="font-size: 48px; margin-bottom: 12px;">🔒</div>
+      <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Évaluation non disponible</h2>
+      <p style="color: var(--text-muted);">L'évaluation n'est pas ouverte actuellement. Attendez les consignes de votre professeur.</p>
+    </div>
+  </div>
+
   <!-- ====== SCREEN 2 : ALREADY COMPLETED ====== -->
   <div class="screen" id="screen-completed">
     <div class="card" style="text-align: center; padding: 48px;">
@@ -945,290 +954,242 @@ const CONFIG = {
 const ALLOWED_DOMAINS = ['@eleve.istlm.be', '@istlm.org'];
 
 /* ========== QUIZ DATA ========== */
+// Données chiffrées (AES-256-GCM) — déchiffrées après login validé
 const QUIZ = [
   {
-    q: "Pourquoi faut-il comptabiliser une écriture de variation de stock en fin d'exercice ?",
+    id: 'Q1',
+    q: '0oaBIsl/aHVdSKty.ycxOn4Olx1jV2XE8wJ99EsI42u8UvzNWUAeoQ809bIiHtW3FjXa0wW1zh+9s6EcoW3CuZswb/ooOmoiatKFIqQu4s+6FZxHTHttjfPLO2flh11BZfJnxbjRTT+8iCqiSKCrkaVgK',
     options: [
-      "Pour que le compte de stock reflète la réalité de l'inventaire et pour influencer correctement le résultat de l'exercice.",
-      "Pour enregistrer les achats de l'année dans le compte de stock.",
-      "Pour comptabiliser les ventes de marchandises réalisées durant l'exercice.",
-      "Pour payer les fournisseurs à qui l'entreprise doit encore de l'argent."
+      'a4Epg14oxCXpfCBl.vMS4BkZwUXDvOTJD5GE1MbY/QsN6ERbJ5wQiaYQkQhG2PSDcJtZEc4EFOEZHkyXGxGWoJ9CkFJhpjc4XqI1iW79BdU5Tcck0AGYCl85tVpYY8W69KKqe/yzW0W/3Jwf5mxqNjOhYq9PMMgs3KFHC7DtELjPknxbBZuCM9F1CD5pb8VTHhSROGMJfrZxN',
+      'BXgGi8JVixD/fVi3.BonvWyXn9k3DKTUe0yxW5YaxmAkiM6yH/E22IwqIVotHlr4Zx4VKml5hBspN1hvEnA2c1+LXKq5xIsTrPIVeXNKgEj+vcqn3PulcknEY1wM=',
+      'WB55kn1dpaVCnTnp.vdrSCJzWk6ZLuHpddXcXP7xYceI8yn6jXlXJFSWiBLLBs7SiLAY4nxuh6O0iSHTKDtQTmxDee+5kvqMsI/d+Y0BKqmYyig+SYjX9ZccNsl/Y+v8RyjYTdjrwH2w=',
+      'mQjotPVbtjlZqc+4.tVOq/KHQPyvEUps8kNX3XlqzwGSAVeS5FF249mcY60an4aD4Rv/rrlS7voTWiZ+G5udIkaiI11YB23l+8uqGkOCKcVsfqnFvOO8PdJpOklEQzVmok6pdeA=='
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Quelle est la formule correcte pour calculer la variation de stock ?",
+    id: 'Q2',
+    q: 'Mt56zAK31dtRcVJ1.Z8HA16xonGWsvJuaZLYD2h6LHLF5cgiHDm47Dggi6tc0dEw6t7FUqrPaEBJsXpIYmYYelJ22KppCKDlsHxauGAl/3kKPEiB8QeYtuZV/CHmdUF8P',
     options: [
-      "Stock initial − Stock final = Variation de stock",
-      "Stock final − Stock initial = Variation de stock",
-      "Achats − Ventes = Variation de stock",
-      "Stock initial + Entrées − Sorties = Variation de stock"
+      '/hY/LwGYe3ZWJ1LK.hebQhpVFSO5z2CjQK15Ahsp+1tzE4NmcZ/IxoX1RlGmOLdaGMq90tMQsyqOyR99oL+9NotBta/47nttsFtitAirc',
+      'XZshqwC0Y5ZJUmC8.T+GjZh8XW+KO2e/o/5ePIwcEZ8/5YWbksYOy1U6LdTG+5rY6tSyAAE/si8Omdb8/E1lWoP+K2Bl4O69hYEnDrM/3',
+      'dUz4/6sMBja9nvOo.Ctf6/7wq41T8KLFyQixipglrQjS+5agwkGMTckGZjYwf4uOeC1Cr2NnNoUM6j7ybBPSevW6s',
+      'jFdfMTQYjXUjLaXr.9CV43pvfFQoh+GXvzUVyOHjeDBX7f/MkMHNawN1GCgRKPOd/38wS/eGWLBWa6gTAyXBJySfMsqbBhWm3O4gvvH/kOFOhhYejFQ=='
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Si le stock initial est INFÉRIEUR au stock final, quelle est la conséquence sur les charges de l'exercice ?",
+    id: 'Q3',
+    q: '1qqwSUvITMBXMSRh.9H6cASgS8kSCvkYBRRbXkYBhjhKNg6eLJZAxAjx+BjRHkYzPa4b0BXMqm489KkZDP1h0rgmsXhIgXuUUnGiXpu1qmfpNw1imKYCLQ+OnFryVQ8DuhPJEl17qKPK6U/PEmuwFRDgMXwUYeczzBx/tR2ItLoTS8EoI1OPbI+Q=',
     options: [
-      "Les charges diminuent car une partie des achats n'a pas été consommée (constitution de stock).",
-      "Les charges augmentent car le stock a coûté plus cher à constituer.",
-      "Les charges restent inchangées, seul le bilan est impacté.",
-      "Les charges deviennent automatiquement nulles."
+      'lBVCnnjC5efEaepK.+izriMz7gl2faLJjCSf5gnWuPxR8/kWj5P5HTHdXih62Gcx9W5eAUU4iQo8CzlhWgMejWS/02B39kOVUEd9FIh8AKjpv/D3kYna1f0GoA/VI8eGsSCKPtrdtMTNDaixRi0Z4lmgZ9Y7P7I+vHI2hMG8=',
+      'gzZpPqmacDf0fIj1.gZ8C19sn6q8UStc+JNAemk5p3lOmm12N+HPhnqnm6PZ2+ThpJlkfn16bhsBGYJNVrsSnWAHUtsyh10tImcTLHQmdpjT2+zd5OirmI7bqrkuR4CHrs+Q=',
+      'y1Ell4e1n0ADlnxC.WbDtDwivL3KiYxO15O0G/2RGCj154vlKByvsijwxCmq5VQT6O/nJYO9pOvThWTN7PRRVOEe/UMkhSTvPBamHt7VtD0ahz3mR3+srew==',
+      '6E8VbvmKNJ7N4pEk.LvY9rpIjEFMASnx5CWLr3pjCAv5P8UFYTiYd2RAxFnsnmO4zgGG62YcnxfqDST7oE7WDKPYoVEdie0ir+Jg='
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Lorsqu'on comptabilise la variation de stock des matières premières, fournitures ou marchandises, quel compte mouvemente-t-on en contrepartie du compte de stock ?",
+    id: 'Q4',
+    q: '3ARAk+xb5xZJWoyJ.DWi18ptWX6QZ1Vootjes6b8iS6K0HV33QvsmRBknYBFqd7Y9R3fbzzi7ep3Uaz+sk+/qKodSpfJK5B1dSIP0rGXQbCxdVP3TlNcTCVAI0Y36rDSJurFFQHyhOX/oRcy52VMqPSBJViKSOFeEdPNL5ZZ+e9IIHZzq5fNcc4hQYSHyDyiq9K3LgTaTx/P04L93KcHR+Qt6hbI2lxjbj37GkzVadJOsqLekIuoTPZTl7+ZXD11u',
     options: [
-      "Le compte 609 « Variation de stock ».",
-      "Le compte 71 « Variation de stock ».",
-      "Le compte 604 « Achats de marchandises ».",
-      "Le compte 44 « Fournisseurs »."
+      '5Egvb3zRP925u3/E.hJWIKTqiEdtZojnN9h5/vNTz4sqyMBSLOjht96mD7q824Kn0JdtlpJkwiZwFiCFUGYvslAETkA==',
+      'YAW06z9jwMm7WQgT.o08LJbppvn93+vgTRo//y+dV6kcI6/FaVpZP1T0LQr7x+//KqUeGPiTQJcchBSfDh1DwZH/R',
+      'ZHmwquJ67vsbih7T.c0v95hNQhO8qktqpJHK66VEtU9m/1fFHDZ7SuIVlFTKpaO1r67VFJnq9pabH0mCFqe/NH1wiEUVmMpM=',
+      'OkR3gD6SlJ+bGznO.uUuctwF5+eN9EZOsIE/w4wmt3M5DeeANjElzLuYJCKVOLBQCnHKN9jlGqeIMfzT4'
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Lorsqu'on comptabilise la variation de stock des produits finis ou des en-cours de fabrication, quel compte mouvemente-t-on en contrepartie du compte de stock ?",
+    id: 'Q5',
+    q: 'ep6c61XKHynv6RHc.npZioF5VoVI1FsqZAawZDlqStZNgaLx7lH8WSL/7iHzhIQxZZszIR9Qlcsh96zr+XVZkIx5NnUPUXC62nCD9zgw3YW/7I4nFoInFRtBkCkPn1mCR1F7vDBwtqcNi9Q9ZX2U3Oo3eAfYNmb2ZuMk8dI1SA4BBJ2IHf/QzcR2xmcLFUB49UBOdR1uZfkQEPPbZCdrRAybC2IFe8JN1okU19NFiCudomE9oz+7edpw/y18=',
     options: [
-      "Le compte 71 « Variation de stock ».",
-      "Le compte 609 « Variation de stock ».",
-      "Le compte 70 « Chiffre d'affaires ».",
-      "Le compte 6000 « Achats de matières premières »."
+      'fxntNbmHKyNeATlS.dxXwPVhLgLRXNdu25JEZN7H+M/mVPsKeHRy0T445sH75Wu6EBTxDul+KB+yDISufLX8N1Cnr',
+      'z/BrCVCsYMFVrvrF.EddOee90sh9PVLmWIvQDWyoqyHegHxWlJAYbqpwHb0gkBtqC0Z056nEmTU5fkM78rxymYWGnMw==',
+      '86VZtpUTraFBz1dD.BWiKWE5EOtynKY+Cc9Mx7nALahxyikmVIgbuuk+ub+D6mEE6SDIGifxXhZwCqHR6zdkX1V2F',
+      'DfXivta/B3D0xm9l.PfnsHijFMvMqM12hawXCySfr25NFA6rJNnuSG5cCYHMCd/FJNXXZxJtMvC5vmX9vzu1N0Uq+9Fx3A9jZITRDMynzTVQ='
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Pourquoi le compte 71 « Variation de stock » est-il un compte de produit alors que le compte 609 est un compte de charge ?",
+    id: 'Q6',
+    q: 'PdDIO3RtWqDVR7Gv.Pwga/TAxt0R/ueJVWNxuu4ckihDcrF4nfD1vjjOE8UmmSymY8BVctmSBIKcOH5/iVtrB4YMbCWGeP+2tK19Hg1Y1YEPHKWCZNFJZOfaDdu9xoHKxZkH5jya1d9vVkRHsm5Czmz0WfZxu0CyUxSvoDUyA9MVolIibDGvNFKeoGxtfx103mnjS7ukULw4=',
     options: [
-      "Parce que les produits finis résultent de la production de l'entreprise, tandis que les matières premières et marchandises sont achetées.",
-      "Parce que les produits finis sont toujours vendus plus cher que les matières premières.",
-      "Parce que les comptes de produit sont toujours en classe 7 par convention administrative.",
-      "Parce que le compte 609 n'existe que dans les grandes entreprises."
+      'rFkbpTja7HC2bQtW.iOa2FubtH//94uEFd69bbeJgbFdQNN/h13OdQ01G8X+/AJhrpENwiD6+syAScN9Wu5gQfRFQhxm3jp9AjFrb/Rgrx1u2nvJB+c5mUJqzaTtd0cca49EvDuK6ZJKZvz/kX2c2an/873bKt4YOA0WKHa/8WaIheIqBeToNzo3O/4IAvg6yb8RHUObiwvKKRQm83REmHZ/3AFsDH72viQ==',
+      'A57NfmBnbmndAexx.XW81DJWvtRS7GnYfqTPLYqOiMpi4iDVV/KHhD0T88svMcd67w5O4oDBXK18CRzCX6GF8NNFcilcLywRngRqZscpc9Y8pkzoiQLKHPWvuVdKdKfPsMBLuuwqXdqep0wQP4DcazWlp8KXK',
+      '16hLTvKUrjgSCpZ8.yFho96e1jrQRhsAIksCZ5dWdu5LQ3SDqZECZpPi9H/Wa/3CltUj7Izsmszidp8o+i4O0HhnrjNyknWDHgz+8kQ5pIauZMScFOLoOOMJXVRjhkPoMVEQe7UzYcM61u7XhZjPmlWCMJJp/',
+      '3kzcMoFNUIN4CY5E.cYbF4R0ikm1Lq+4KNZTxT+ojGLw7J9gfhAMlWK6hm1lNYkOCNRS5kZiu3j65X8EhOQgcWW49Lij4VWbjgU2t1P5lzF1OHcIj+vwKrxAyMw66Rg=='
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Lorsque le stock de matières premières DIMINUE au cours de l'exercice, comment l'écriture est-elle passée ?",
+    id: 'Q7',
+    q: '7Pon07pn/IwE4VbB.ZlxRIsfYajXz64KGK+tIh4tGI4dIgjd+OQTxrIHHQ9dzzuaSGkM4EuIh3L0pXpt+afj2ndWMD+HRITPGYwVQFtXSlpxTVmr4zD2Bbbmhh04z6xxdh98DDOzS4w9ySffr00ljP0Pib1GIh1WfU/xN0/9cwj3RlU68LdfISY31jQ==',
     options: [
-      "Débit : Variation de stock (609) — Crédit : Stocks matières premières (3000).",
-      "Débit : Stocks matières premières (3000) — Crédit : Variation de stock (609).",
-      "Débit : Achats matières premières (6000) — Crédit : Stocks (3000).",
-      "Débit : Variation de stock (71) — Crédit : Produits finis (3300)."
+      'CnNCnqw2HHzpN5vQ.V2LH3JyeKcDWQS9nRXcwjkpe7YZFFzZKsgAvofYQ2quv4aSKGPmsrv5z6ZR55ZqGUsJo627oAKe00Z0XOwndX3n+CCLYk4TPpsKaSOkecNYwanvK6USTPujfpdO5H1dCwRac',
+      '6q/sqdqYC80KXtSe.0PNLlXmSGqz7oE4ts9F1jEF8odSM4Dy1U+1dZ6M4Zi4kzw4munmCPNbe7QGa4VYo/WoWsgke+rb7w0P4y1o2Glr+97yDdbE49ppOU82Puv+LwxaIHKVQWAfyTzZ9iBby9oPp',
+      'VAWXrNiK1sXs3cNG.ZUHA3wVYq5xnSxv0OoqSNUxDWdoBMjQWH2aohGg0s21XURX3beorhiyPsmrHNuk1uace0c0VERPr4I0kpiVJTywR1LUnvKGH+WoqCrAgjtE8e+f/HmNB0g==',
+      'VTB8irpMKmGPW1gX.j6QsQXnkIND5bbRx0iE5o0t8IYjKxaIslK2TH6HkjrHjsApIoUrMU39/dqnGW4gToqXpiMChhhfYoShCATRuoOcb60pLG3QOqDva4Ejt0dtHvhFrTg=='
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Lorsque le stock de produits finis AUGMENTE au cours de l'exercice, comment l'écriture est-elle passée ?",
+    id: 'Q8',
+    q: 'gar4g4IGFC4XiGrH.1TGr/tMZd5hWORMdtcZUImbmr/QPTXu68vGMHmdGJDUmp0zHRvqpFwujFz6scL4bIOc8HhVYl5uMNgv/0jWGV3D84L3kbz6y1PW3d+IhVT8uY0e/rAjXGEWMcezUb9rKaQ/hycgmXAHm9Ckum5taeh+C95fDl9Kjg6Q=',
     options: [
-      "Débit : Stocks produits finis (3300) — Crédit : Variation de stock (71).",
-      "Débit : Variation de stock (71) — Crédit : Stocks produits finis (3300).",
-      "Débit : Stocks produits finis (3300) — Crédit : Ventes (70).",
-      "Débit : Variation de stock (609) — Crédit : Stocks produits finis (3300)."
+      'sVIKo2H5yZGpTz19.+Bj92cvFz7EZ1O11C82uYBYhib7UOwM5c7DBPNKpeOhN3aqbHv0h5eigD7QO9A77AZoOreqy5c6z0h5rXDQnpAV0lHV7l67i+EkMi9X2g1vtOTbDo8+kVkPoboE=',
+      'd50A0uwzWPrmPbz2.JezN9AViA1zULD4D3HHvYwi4yxLXP39CaORDGdUwQsqzegQ4KLvjvx0b4fyTwwi71yM3puuAdmf+EeU3Be6ty020rax/EhUo1tzHo2DK1fQpFTKsXQacT6XKdYM=',
+      'iLXqIwO51IsOZokv.VQwuxUppANmzBgageCpOmyyHJAYw/4fmDtNAoM60QO5Itrjl78vvkie3ArxIED1wuy7FDgzknHh8TV1oSjE3vuGEA15j4DbaK2P0Q/5i8i0=',
+      '0tIUZ9YGcD9s6YD0.KI2WwcKhpiEjBqvezKVjc1Vzm+wBLujwOe4v9aXK4BYEOmGns8TFm/daDJG7U+h0qtKfnA1Xd5170qCd611Ah5wMQFECDXzm24mwgbCiDbGKlOHcvPg242tCOKWw'
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Que se passerait-il si l'entreprise OUBLIAIT de comptabiliser la variation de stock en fin d'exercice ?",
+    id: 'Q9',
+    q: 'dZRJpVgmsSOKMYFB.hbSJ4D4MZk8xiNxVNt5VqVUvjpeyDfb2zEp5VUa5kyxjcAa4EKwZulInEtY2B5eu845v03P5hSu35okand7wPMlPRis4bEMmk6lEhyejxm7vUx0njBTZQzi5rS4UHXDabacdcJ4g/L49B38R0g3QD+UiZ7eoNvY=',
     options: [
-      "Le résultat de l'exercice serait faussé et le bilan ne refléterait pas la valeur réelle des stocks.",
-      "Rien, la variation de stock est facultative pour les PME.",
-      "L'entreprise paierait moins de TVA à l'État.",
-      "Les comptes fournisseurs seraient automatiquement soldés."
+      'IzvK0VH4/47CyGWd.8QnBTwyXf46ZRTpcReAxYTuHl4jPazukfRovqulXXPUQwhzZb+UDy8Pk47hqxMz3ShyNi3WK0u8HIgAtvxUxhZEBp8YKJyrcOp0++6U4xlVeiTPYbe7WEoZQi4sMDcJNzwayfyATPjsJswJcCEB/eI+DCd4nknE=',
+      'wAGWjdaMW2rvSoLK.pf7MhQ8KpafZZgiM9kjIkpyWhfuqfxzwbvh7Iu+3WYw2ZGYN0MhbM8QynYsLmRKJI3cgdKx7iooGGbjo0uEKcbv13JRCKtjMRw==',
+      'qy/ovBsEb6GLRnj5.9osb/rH++GEkMuPVYkEs2dQWIvesWfbDO5XNRgnv9dc7cPKyVgnvTwWyip9DZENEz8VckiqXHJG8mKJQlVc=',
+      'A+8cAM0vGJEvgcoQ.0DhEkNC6VH76chn2cG8kJ6LRaBsVw+Pg1QR7F2DT7HAF3uwjcgVEsJzvcWwr4O9/16bcDgJAEUnJholVGOqem/0ICqIeWcHosjQ='
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   },
   {
-    q: "Parmi les comptes de stock suivants, lequel NE PEUT PAS faire l'objet d'une écriture de variation de stock via le compte de charge 609 ?",
+    id: 'Q10',
+    q: 'dj9Art3Naq7OpEuH.0N4iPiEDR8U+h4Wnf9EF/Qs8ry1FGCz9FjwBgE/NV7+NnOUnPf/0ZLK1mzxqH85cCl0CTl39ex6GBy5XnfOnvQf9XBiLUO39TzJSmzePRkL0OMilUqvVAbReBde5+e0SuDZOMJh+/wGHUnlIKbZVP45fD++AAyIfAUvnSFLXbLDoz3pdpixUoZsy1wgpARKZdB0SnZPlNPRQ',
     options: [
-      "3300 Produits finis.",
-      "3000 Matières premières.",
-      "3100 Fournitures.",
-      "3400 Marchandises."
+      'CbN8WhlyljjgTpi8.S0B2W/xrAB5/HGsIaOM9bZOwhASnrw8C9Ajj7Af9/J/YPGt7',
+      '86xfyf6Cm9PEZxoc.0PKDTZoW1nBPeefXqyTGWD7DMHKB9l8e5ZZJdwNU5KA1osscNiHLlmYk',
+      'm7WjLOLjGGrKUebl.Ks28aAPfoe+TIenJcAGcpP8jlMWdmsG4S63H3/8NeGWb',
+      'sc+3vQReVC/4Ezzd.OsGIcddMMaoFNlor6UHHDxxAdxQJ7Amnfs8ueBfp2koolA=='
     ],
-    correct: 0
+    correct: 0,
+    points: 1
   }
 ];
 
 /* ========== EXERCISE CONTEXT ========== */
-const EXERCISE_CONTEXT = `
-<div class="context-title">Entreprise « Moulin » — Relevé de stocks au 31/12/N</div>
-Le service comptable vous a chargé(e) de traiter les écritures de variation de stock.
-<br><br>
-<strong>Stocks en début d'année N (1/01/N) :</strong>
-<ul class="data-list">
-  <li>Stock matières premières : <span class="mono">15 032,00 €</span></li>
-  <li>Stock produits finis : <span class="mono">50 140,00 €</span></li>
-</ul>
-<strong>Stocks en fin d'année N (31/12/N) :</strong>
-<ul class="data-list">
-  <li>Stock matières premières : <span class="mono">10 550,00 €</span></li>
-  <li>Stock produits finis : <span class="mono">95 099,00 €</span></li>
-</ul>
-<strong>Compte de résultat au 31/12/N (avant variations de stock) :</strong>
-<ul class="data-list">
-  <li>Achats matières premières : <span class="mono">55 650,00 €</span></li>
-  <li>Services et biens divers : <span class="mono">32 700,00 €</span></li>
-  <li>Rémunérations : <span class="mono">77 365,00 €</span></li>
-  <li>Amortissements : <span class="mono">17 000,00 €</span></li>
-  <li>Charges financières : <span class="mono">1 850,00 €</span></li>
-  <li>Ventes : <span class="mono">220 300,00 €</span></li>
-  <li>Produits financiers : <span class="mono">250,00 €</span></li>
-</ul>
-`;
+const EXERCISE_CONTEXT_ENC = 'XT+z7USIkn0wVztX.7R+1BKxD26LJIouwTZvSA/8kgnvmYoZWwiRdF2TrP+tfGa3cqLzXSHhDeMkNo9S9DXjfWY0abOpcwXSUY/CWedqoST+xOpi93Mp+R0juTu2WAPmx7IHT9igDaxjlU3toQRG0vQeLNES0AuwJsHqPwoalGNGukYd08V16rkkyfL/lEzgswKTwEK8Ym4KRFXsq93vpwg+k4EiMRhcSJPvJgjH6eCcxJtJUpEvpcgY+NlnJ5dKJ8NPFrqoCDR5qz8YtHrFPleS9Xl6v6GPKvag1wGg6fCNv/RRKX8sRsL8wpgX8Jxuc1hu97yC0MQXkOSQlkqPZ3jBcDMj2ifuFLuS4dvYVS6lmTglcglyxjX0PS/RsbgX/EsBS3S+PvIGbqsyo/xCdzdeJQfAzoyr7HZIM3HLnMRjOn2oEgs27ED+Dz0m/GxKGCTlOzNeLdNxpQHxmEudYrodeUWb7w4sDlKSrtx3XDNXRZYo/hTH+3vWPmUh0p0pF0lHeiavl3UpB5BdRyXk9iYPJQ6EhHb3KgDWOmMe1bDRxG4cDCHf7RmqYsKjsdg4YyzscPGaaCqwm2PK7zOTmjcpQT8fE7ALAMlp2Y8ASXSXb/zXGXX9dDj8so7RRqzsj0qrqNLHS4rYyabUYikkNzFKQ+SdOYGHQyUVnaxJrjr0JOz6EaGrfXqtVL4PJQrjaLreMCAwB5uAfjJb6mtsyjzJVECy4CWbZhF6XooTUKolJR1+aU9xJsS4kElcO7cQ1QNbkmh0WbcqXYjpvsKu7SySdO1QyCuuF0Jj8TrNPTtaSBYgzI9SHm6DD1kPnjFiYOzUg0sg0RmOAj47XzubhBWEO+lQt/MfWRNpjRfFE+CRGBaWI9Y+gQnXVeQctM4eJ8FhITLpzEAOz9Flwb/KKBHqw0q6Y8X7qo0RhS3WdSO2vNj7E51RSRmax8PUotHYGxYzScLtBJY1VRTtOTPqqCiIH38IWBD8830SMuKUNxSuJP5bgJJFLYFgODolnGqlz9UQ9Pupz4UzF3Z+MnjCSat9AwlGcrgENMitZIDCmThOmNC7/D/Rq4BI9CKeIQc0QYs3/BNrmYdyEKpztJmApCMDGgB67KMpqwBfQ+P3K1EOE2Xc8hHcNY+guH/248r1GDBhPgiW+BWb27zeP5C3NT1LGE+KWrXSydiVin1XPgZpvGFhGv1DlYkEjum+SOa63LGOGQsY/c0UtXHKS60aVcDh2AgNu9+aORC8c/VbRA44uwWZEEkoAxDT4Ipuxs9lze3arTMCpUCAhNkMITCSocz5UIXcv23lGQvjgiTPmA9fDxUwddGCk4mLTqsJBFEEkAKoAmrmnyva90yNqON8/djv8yxgeUkm7juMkxvtBRSiguX33HLGggdJvxuCoESjZ9C88mt1nVZwMH9+SgzkV2IAenm0dBhcxGEYGtIsWgV172thS/LSmX7swaQaOBXIDg/cJYE++KKCB7TbvZdvtMu1vpJebf47QxuKLJcsR/X3z52UUjf93sFofgjUIHegw1kvY/tfB/XDRJSPIh5Ld3n0DPUGoVRABOXTY1GzHCRRXDnJ/2VoU9a7sNAu8lYovalmbOWmx8DgNfGoquUwGYXe8MmU0C2Db6oykGZKI7EaVTgi9iMNdujrXA6aN4iTrUdnCXMsm5/jTZNyxRgTHQFPE3+sShsLrWaOs47EIgZkhIi4d+1gk3aBoubNAcL7khgJm';
+let EXERCISE_CONTEXT = '';  // sera rempli après déchiffrement
 
-/* ========== EXERCISE DATA ========== */
-/*
-  Calculs (référence interne) :
-  - Variation MP : SI - SF = 15032 - 10550 = 4482 (stock diminué → charge)
-  - Variation PF : SI - SF = 50140 - 95099 = -44959 (stock augmenté)
-
-  Écritures :
-  - MP (diminution) :
-      6090 Variation de stock MP  4482 D
-      3000 Stocks MP              4482 C
-  - PF (augmentation) :
-      3300 Stocks PF             44959 D
-      7130 Variation de stock PF 44959 C
-
-  Compte de résultat après variations :
-  Charges :
-    Achats MP          55 650
-    Variation stocks MP 4 482 (charge supplémentaire car stock diminué)
-    SBD                32 700
-    Rémunérations      77 365
-    Amortissements     17 000
-    Charges financières 1 850
-    TOTAL             189 047
-
-  Produits :
-    Ventes            220 300
-    Variation stocks PF 44 959 (produit supplémentaire car stock augmenté)
-    Produits financiers    250
-    TOTAL             265 509
-
-  Résultat = 265 509 - 189 047 = 76 462 €
-*/
+/* ========== EXERCISE DATA (chiffré) ========== */
 
 const EXERCISES = [
-  // EX 1.1 — QCM (3 pts)
   {
     id: 'EX1.1',
-    partie: 'Exercice 1 — Question théorique',
+    partie: 'GhPbH59kBFBT5MG4.RMdmCXb5d94zVs+tnQDTNlax6T1XVmk5iY4gtMblhY3gZlYlqmX5M1IqZjwsXA3p5cs=',
     type: 'qcm',
     context: EXERCISE_CONTEXT,
-    q: "Question théorique appliquée : pourquoi l'entreprise « Moulin » doit-elle comptabiliser une écriture de variation de stock au 31/12/N ?",
+    q: 't/mc8idJCR0fyTIS.41HHQw//aD7Zru8dyNd9xTtD9SxfzXXdeDREEsFPuGojSX2IDnDYd3ABfkwODbk8ld+jv5KnwbUaOMwOJPOly/HFmoLibIKmGu7IaqMTeUylDWwIngoTa389JaA78oNgVNuck7PhMvU1cysGUp4xoI5us7CMO0HxL4WABZWdaYZXUPJayNnG2u1qVP01yyzrGiglW5/gA0/j5Jw/',
     options: [
-      "Pour corriger la valeur comptable des stocks (classe 3) afin qu'elle corresponde à l'inventaire réel, et pour refléter correctement dans le résultat la partie des achats consommée durant l'exercice.",
-      "Pour comptabiliser rétroactivement les ventes non enregistrées durant l'année.",
-      "Pour annuler automatiquement les achats de matières premières qui n'ont pas été payés.",
-      "Pour éviter de payer l'impôt des sociétés sur les stocks restants."
+      'pGMdU5/VUsmjDKpz.DGJKcu/TqCNtoQcZqUpMrXFWDhjyJo3KGCmREAL3ygjNfN6xrguOj8Gm7lgSwVDiHZ6ef4apfp2XUMMuPtXvoi5WvKtiNERqimZWspq7+Nvx/iShxaWnaXf5aJJfwya0iOxJKj12YJ21W5l2vcUONF6jvueu6/AGtHlFpXLGOLzUnetJ9WCwM+rm8SbDeI/Yi3fu61UTHezwuwSADAMovXXbxlpeCGhAZf1ZkYqtxXOkUB5y1dzBq/4xmTqlqzlcCum5nrIxE9clQ/A9N4YhOLe1S5OaEe8E6UbK',
+      'RQAkYFqjNVmylKEP.SE4TddwjKj+0jSOSSI8wjygVRDnLuVvci9M595TlB0IKgWr8PLOcWxxi72N6gATGh7Tx4iUmUTPJJuNH9uizS7owPX0wLhuEQC4WAAX+tTobuHYA65K0ezjWh4rbFvOcAA==',
+      'LZ2mVmlESG1bggqV.OJb2xLfLSGMByAl0yTC6wDmgoXfaeWOWo8obcmeswKSzMOV3Q02ESY0PbN7vCNcdk7d0DCL22AtfOj8i3PuYiOg/7CWYIF7II4t9w+Ghqe/NUW/l+D4k1qcm5P4YBNOJZdS8mRcW7z7e1cI=',
+      '/GIGOGx7+bd60WM5.SLR2lFu6skX3YLfg0ujA+b0FAc2TN6Gvyodjudo8D2Cxcsgel+8C+btffZ40Dri2FtcGZRZsNbV8cU8LdKZY18uInmiyuomWqjdgErtRfETzuNxmu4s='
     ],
     correct: 0,
     points: 3
   },
-
-  // EX 1.2 — Calcul variation MP (2 pts)
   {
     id: 'EX1.2',
-    partie: 'Exercice 1 — Calcul variation de stock MP',
+    partie: '0Nwd63+UCDD+c2tL.zLwrXRHyDPEJCN53AfCUOckoVJLPcB6fv5gkUJs4h2xkm97p02Zsf8Vt9igjZ4LjPw7jZw83B1KB3bs=',
     type: 'numeric',
     context: EXERCISE_CONTEXT,
-    q: "Calculez la variation de stock de matières premières pour l'année N.",
-    hint: "Appliquez la formule : Stock initial − Stock final.",
-    answer: 4482,
-    tolerance: 0.50,
+    q: 'EQVOMP8a+nmAAjdy.XbBxhFXVy+8ryPpgH336aQ+P6m7FGsdT/FYQK2K7U8nCost9udHdm7QIKHxE0REwHxwOhMghgwiiUlVxP4yIA6m/fMH4orPcDb+fx8OK1v1hQhMSY0wz',
+    hint: 'KpBMzdKTUGApEFp9.VKYotcZ5vrQrMT4vanbFAp3ZEVvZGrt7LBAGuKJgeyxOrJHFYiMZ00odlTrLvhSsALxcUgyaT0M9zJyiLGMT1E1oAWJw',
+    answer: 'lb3T8JzteXo2alNW.KwW/c2NW2eauVysIDELsqCL4g5M=',
+    tolerance: 0.5,
     acceptAbsolute: true,
     unit: '€',
     points: 2
   },
-
-  // EX 1.3 — Calcul variation PF (2 pts)
   {
     id: 'EX1.3',
-    partie: 'Exercice 1 — Calcul variation de stock PF',
+    partie: 'YQDyFTuYMbZKrISA.sWkdeNcgmM0UJT2Msj+ehQQqGD79yrfyZa0TBE4V3lXl9nhopq+rzxSXdWpO9lCIxFlBIUwlWuCZoNk=',
     type: 'numeric',
     context: EXERCISE_CONTEXT,
-    q: "Calculez la variation de stock de produits finis pour l'année N.",
-    hint: "Appliquez la formule : Stock initial − Stock final.",
-    answer: 44959,
-    tolerance: 0.50,
+    q: 'n7yz3FTl01kb7RYP.bkL6k4QkTCk4ZMn2kK2Itnd9oPhBr8Y9rCr+LVfANhq2nTR6D8Uo63LhSFOsA9FHXub5UbPqjax4Vvm8uXjC7cZRrqDSVCkCIhB16RQVgeQJ',
+    hint: 'N2LSw4SIm7e5H5MR.PYvmruJfYGmFkg8CmgA90s4JGYs3MMO6pP6DK/xUqmfLkkcoENgpTcjym3GGCKmBH/xpx84+FW+FsEz19ffF/KtT92TC',
+    answer: 'GSqw8eJdZTr6nsAn.K8vpVN1lCgAO4hCxpvh4Zs5jLy46',
+    tolerance: 0.5,
     acceptAbsolute: true,
     unit: '€',
     points: 2
   },
-
-  // EX 1.4 — Écriture variation MP (5 pts)
   {
     id: 'EX1.4',
-    partie: 'Exercice 1 — Écriture variation MP (31/12/N)',
+    partie: '3NuSuIo9YrX+ZGe2.dR63D7YKtRoTtmtoCfK1rXNgMsDK/DPFYlGtWLpKj80sRrims06kgyI6hKJ3n+vxGVT7kGCAtiy4pUyYPoOR',
     type: 'entry',
     context: EXERCISE_CONTEXT,
-    q: "Enregistrez l'écriture de variation de stock des matières premières au 31/12/N dans le journal approprié.",
-    journal: 'JOD',
+    q: 'b+lMYsRkCXJXZ9BK.hzXER/6om29GWm5y2Q3VzucH5ZvHiVz3YH677B7o+tA0uZ4QM6x14WuKu5C/MK72uXyIabVSXDsDQEt26XEDGnRWPUUdo666L/kEwWuNjPoyG03pAKxnXC6+tM54AJjLNr6ts9Y/mutNfFhu59ed//rFYPvR+Y/xDjFFYGw=',
+    journal: 't1deI0a3+dL+RBl2.5Job2F/1FHZwPVYJuSHpeme3sw==',
     expectedLines: [
-      { account: '6090', debit: 4482, credit: 0 },
-      { account: '3000', debit: 0, credit: 4482 }
+      { account: 'ZVw5G+zH9Eio965V.VCydivuPlUnYFY/j4HkVEn6jDIg=', debit: 'PCj0GRrforGTtmtC.xsPBppTt/WxM8SLwHP+FPZianq4=', credit: '3xo7ekHzAo3gJEsw.otpTSBL/gZ5Gl1XGOaefcn0=' },
+      { account: 'sZmbd50f7Oz/7sDh.xTijpdfjI1XcD2ppo8G0y06OLyE=', debit: 'vK50etU8cHkpV5+L.xP4EDlTJkQsrVzkSe2y1v04=', credit: 'rMAuR+DPFIutXQzR.vn5euYYtHmz97GlbIkmPaLr5qbc=' }
     ],
     points: 5
   },
-
-  // EX 1.5 — Écriture variation PF (5 pts)
   {
     id: 'EX1.5',
-    partie: 'Exercice 1 — Écriture variation PF (31/12/N)',
+    partie: 'tu1rlUkqiO8RHDG3.55eEAe2k81HK2gKJ8BEl4jDZ7FLiUUUTstVez7WRT8yk9hFwfUF+fTi+E1xHYwCFp9ebN6AK6HNB+6i5fYhh',
     type: 'entry',
     context: EXERCISE_CONTEXT,
-    q: "Enregistrez l'écriture de variation de stock des produits finis au 31/12/N dans le journal approprié.",
-    journal: 'JOD',
+    q: 'hBeYtxlTUN8ndNIx.CBM1KyKDwfKpd8I15ZuKJcmj6cwzVUDr83IOYdOQ35kc25poXWduUM79133JBkt7u9wbr/CUixkwbLNvAruLj2LcmEBQp0BtgukTdqeKzR9impu+VA4sKZFIjdVDwSzcFj4IVxe7btPcUfIZ2dmXPdf1MFv59hg=',
+    journal: '6mgrR0g1gGqNvePe.mxXX0y9no3LwS354kL4aOD/DOQ==',
     expectedLines: [
-      { account: '3300', debit: 44959, credit: 0 },
-      { account: '7130', debit: 0, credit: 44959 }
+      { account: 'DqB2O1F6LM/mah13.zXNwb9/DXuli5VXfUAhNV2wZeIo=', debit: '7nBWu9y2tjmuwAVL.2yYWJtzIeiV6et7+RYhfRlETnZXd', credit: 'wrnlK6KOfeXCr6Sj.b5xGwwf1GYm6tZy+9XOQ8o0=' },
+      { account: 'dFtSYNDgzX/tyFVk.GsHxcQpB388a9dIPAFmEbS3Ss0s=', debit: 'CcOcZ1BA9SJJf4Xg.8bvUkmG8uaDgpEOWaGkwOv0=', credit: 'KThsm8mF+SoL7rdp.eSa3ahaOxU5AAitR5RsldcLwsw+m' }
     ],
     points: 5
   },
-
-  // EX 1.6 — Total charges après variation (4 pts)
   {
     id: 'EX1.6',
-    partie: 'Exercice 1 — Total des charges',
+    partie: 'zSfBh/Km8aNHmdBJ.XAWnRmpNnkQNV8lAPbOVRGp07+l9YR7RpftTOjEER9tCelCClgQ+gKrzzGBBEuvN',
     type: 'numeric',
     context: EXERCISE_CONTEXT,
-    showStudentRecap: true,
-    q: "Après comptabilisation des variations de stock, déterminez le TOTAL DES CHARGES dans le compte de résultat au 31/12/N.",
-    hint: "Additionnez tous les comptes de charge, variation de stock des matières premières incluse.",
-    answer: 189047,
-    tolerance: 0.50,
+    q: 'Jh3EvSZiQqmyPEWu.MlMX+T4yit7Ay8tE2CwD4f67In5tK2dhrkbW1goprzPN+DxDdMxEETHFEJQGHt4rMmD5066Mvv3jTr8O6QQFIsUjGcVpQCzRcxcEg9TX5MFEfGJn4wMj7XFcW1pXGm/Aqm4Z+fH1AeDPPTTuSDTHHVjBQwhKgN56dNDm9u2TEBHeScqf+un2R5o=',
+    hint: 'ObjysQW7QioeZcTA.TlM2HG912FmfSB6GBOhoL3ktAYk2VSjpb4TY8a11UWELd6GFvsHGSvGiAuOzHMfbe9Pt1aKvUvXHA4u7G/2BxKEcOJ0J0z/s3/1McmDR3dy+7QlTH2VbRYFVMfJd2A+PHbW24FFZEagLQT9L',
+    answer: 'MSnxCAnIsroYW1le.kOCbr9+vzcNgBrNokDxiVQgCqnE02w==',
+    tolerance: 0.5,
     unit: '€',
+    showStudentRecap: true,
     points: 4
   },
-
-  // EX 1.7 — Total produits après variation (4 pts)
   {
     id: 'EX1.7',
-    partie: 'Exercice 1 — Total des produits',
+    partie: 'ac+qjxQP5v3gaTd7.1YedgN47zb1NHCKVk13x1Uw5Jzd5FiDVMQ9B80qtWt8ccdN/amZqhoqH4O58QkLQdw==',
     type: 'numeric',
     context: EXERCISE_CONTEXT,
-    showStudentRecap: true,
-    q: "Après comptabilisation des variations de stock, déterminez le TOTAL DES PRODUITS dans le compte de résultat au 31/12/N.",
-    hint: "Additionnez tous les comptes de produit, variation de stock des produits finis incluse.",
-    answer: 265509,
-    tolerance: 0.50,
+    q: 'PU1U3XzBRvabbkRf.qZsiSYQJ9FJgU1w+wmBJj0eHCgH+zrr/LqfFkEHEpCXWgSGsvh8iFTJATS3uOqViuwT+2HFz02vHE+ZqmHEgPxKPAfV4X0Jk631qYn0Frm9HJzMHNlY3qBi7bBWo8apB06SRcFsDcl5l97qf0CYureT7arx/yT1RXtMFCjfJDh0d5KojJG0lIH01',
+    hint: 'hOxiM9Ejw5YCjiq6.hJGEXsfVLr6VEbNUKB6fAcjKZoYE3S0cSQo1On8CLYI6MpXTSXgIWp/Rm6K1PpZPApVbqGM+dHoiGcQoL5XPQHUujyiHloLUaWyUXu19VSWXO5SMT8RhblIbyNR7AYxV/Z+L+kDkYg==',
+    answer: 'cCNxGHoLems0bF5C.m8ep9KoQKpjZSIjAXuaRuPDDnXVCbA==',
+    tolerance: 0.5,
     unit: '€',
+    showStudentRecap: true,
     points: 4
   },
-
-  // EX 1.8 — Résultat comptable (5 pts)
   {
     id: 'EX1.8',
-    partie: 'Exercice 1 — Résultat comptable',
+    partie: '0eJw3ErrKOgeKFsv.TJQ39AkrPclwpAXjqYiKueCbij4k6PhAhzPkjmFlL/LrZICSrc3/loLZb1lp7JtfLKI=',
     type: 'numeric',
     context: EXERCISE_CONTEXT,
+    q: 'u8Raf4vTIRLYWAmX.2YUVZrT3D3tuATJb97BpP5nu+n7TsQzj2/z23ZlAg5L4ohfauKLNeBRKPfdM/3QgFybXlZ7a3R1UNwS+1tOWiNgXQMA1+nrG5QL4yrHSvqwsoqZRlZZ9oWxWGhddyJjm',
+    hint: 'NroS6ztbweGm5811.Mvn56WWEqGh/jfCIyt7IDR45+6HT+tJxu6amzTJ/kLjBp/9F5LvoBKs2UOF5xNFNumIMzoBQChOLmgm2OXtdprSJPnVojUTs0i70vsHSGK5kT/Tm5kdoC0HA',
+    answer: '5GssbqTNBEhmBWrO.3VDz+jw+xJfNQK/N4BpvJUI/ibLJ',
+    tolerance: 0.5,
+    unit: '€',
     showStudentRecap: true,
     showTotalsRecap: true,
-    q: "Déterminez le résultat comptable de l'entreprise « Moulin » pour l'année N.",
-    hint: "Indiquez un montant positif pour un bénéfice ou négatif pour une perte.",
-    answer: 76462,
-    tolerance: 0.50,
-    unit: '€',
     points: 5
   }
 ];
@@ -1243,18 +1204,21 @@ function shuffleOptions(arr, correctIndex) {
   }
   return { options: shuffled, correct: shuffled.indexOf(correctText) };
 }
-QUIZ.forEach(q => {
-  const s = shuffleOptions(q.options, q.correct);
-  q.options = s.options;
-  q.correct = s.correct;
-});
-EXERCISES.forEach(ex => {
-  if (ex.type === 'qcm' && ex.options && ex.options.length > 1) {
-    const s = shuffleOptions(ex.options, ex.correct);
-    ex.options = s.options;
-    ex.correct = s.correct;
-  }
-});
+// Randomisation appelée APRÈS le déchiffrement (voir applyShuffles dans LOGIN)
+function applyShuffles() {
+  QUIZ.forEach(q => {
+    const s = shuffleOptions(q.options, q.correct);
+    q.options = s.options;
+    q.correct = s.correct;
+  });
+  EXERCISES.forEach(ex => {
+    if (ex.type === 'qcm' && ex.options && ex.options.length > 1) {
+      const s = shuffleOptions(ex.options, ex.correct);
+      ex.options = s.options;
+      ex.correct = s.correct;
+    }
+  });
+}
 
 /* ========== STATE ========== */
 const STATE = {
@@ -1377,6 +1341,78 @@ function submitAnswer({volet, partie, question, reponseEleve, reponseCorrecte, p
   postData(payload);
 }
 
+/* ========== DÉCHIFFREMENT AES-GCM (Web Crypto API) ========== */
+async function importKey(hexKey) {
+  const keyBytes = new Uint8Array(
+    hexKey.match(/.{1,2}/g).map(b => parseInt(b, 16))
+  );
+  return await window.crypto.subtle.importKey(
+    'raw', keyBytes, 'AES-GCM', false, ['decrypt']
+  );
+}
+
+async function decryptText(encrypted, cryptoKey) {
+  if (encrypted === null || encrypted === undefined) return encrypted;
+  const [ivB64, cipherB64] = encrypted.split('.');
+  const iv = Uint8Array.from(atob(ivB64), c => c.charCodeAt(0));
+  const cipher = Uint8Array.from(atob(cipherB64), c => c.charCodeAt(0));
+  const decrypted = await window.crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: iv },
+    cryptoKey,
+    cipher
+  );
+  return new TextDecoder().decode(decrypted);
+}
+
+async function decryptAllData(cryptoKey) {
+  // Quiz
+  for (let q of QUIZ) {
+    q.q = await decryptText(q.q, cryptoKey);
+    q.options = await Promise.all(q.options.map(o => decryptText(o, cryptoKey)));
+  }
+  // Contexte exercice
+  EXERCISE_CONTEXT = await decryptText(EXERCISE_CONTEXT_ENC, cryptoKey);
+  // Exercices
+  for (let ex of EXERCISES) {
+    ex.q = await decryptText(ex.q, cryptoKey);
+    if (ex.partie) ex.partie = await decryptText(ex.partie, cryptoKey);
+    if (ex.hint) ex.hint = await decryptText(ex.hint, cryptoKey);
+    // Le contexte est référencé par la variable EXERCISE_CONTEXT, donc déjà OK
+    // (la propriété ex.context pointe encore vers l'ancienne valeur '' de EXERCISE_CONTEXT
+    // au moment de l'évaluation initiale ; il faut la remettre à jour)
+    if (ex.context !== undefined) ex.context = EXERCISE_CONTEXT;
+    if (ex.options) {
+      ex.options = await Promise.all(ex.options.map(o => decryptText(o, cryptoKey)));
+    }
+    if (ex.journal) ex.journal = await decryptText(ex.journal, cryptoKey);
+    if (ex.answer !== undefined && ex.answer !== null) {
+      ex.answer = parseFloat(await decryptText(ex.answer, cryptoKey));
+    }
+    if (ex.answers) {
+      ex.answers = await Promise.all(
+        ex.answers.map(async a => parseFloat(await decryptText(a, cryptoKey)))
+      );
+    }
+    if (ex.expectedLines) {
+      for (let line of ex.expectedLines) {
+        if (typeof line.account === 'string') {
+          line.account = await decryptText(line.account, cryptoKey);
+        } else if (Array.isArray(line.account)) {
+          line.account = await Promise.all(
+            line.account.map(a => decryptText(a, cryptoKey))
+          );
+        }
+        if (line.debit !== undefined && line.debit !== null) {
+          line.debit = parseFloat(await decryptText(String(line.debit), cryptoKey));
+        }
+        if (line.credit !== undefined && line.credit !== null) {
+          line.credit = parseFloat(await decryptText(String(line.credit), cryptoKey));
+        }
+      }
+    }
+  }
+}
+
 /* ========== LOGIN ========== */
 document.getElementById('startBtn').addEventListener('click', async () => {
   const emailInput = document.getElementById('emailInput');
@@ -1394,8 +1430,15 @@ document.getElementById('startBtn').addEventListener('click', async () => {
   btn.textContent = 'Vérification…';
 
   try {
-    // 1. Check email
+    // 1. Check email — récupère aussi la clé de déchiffrement
     const r1 = await jsonp({ action: 'check_email', email: val.email });
+
+    // Verrou fermé : afficher l'écran dédié
+    if (r1.error === 'locked') {
+      showScreen('screenLocked');
+      return;
+    }
+
     if (!r1.found) {
       errorEl.textContent = "Email non enregistré. Contactez votre professeur.";
       errorEl.classList.add('show');
@@ -1403,18 +1446,43 @@ document.getElementById('startBtn').addEventListener('click', async () => {
       btn.textContent = "Commencer l'évaluation";
       return;
     }
+
+    if (!r1.cle) {
+      errorEl.textContent = "Erreur technique : clé absente. Prévenez votre professeur.";
+      errorEl.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = "Commencer l'évaluation";
+      return;
+    }
+
+    // 1b. Importer la clé et déchiffrer toutes les données
+    try {
+      const cryptoKey = await importKey(r1.cle);
+      await decryptAllData(cryptoKey);
+      applyShuffles();
+    } catch (cryptoErr) {
+      console.error(cryptoErr);
+      errorEl.textContent = "Erreur technique au chargement. Prévenez votre professeur.";
+      errorEl.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = "Commencer l'évaluation";
+      return;
+    }
+
     STATE.email = val.email;
     STATE.classe = r1.classe || '';
 
     // 2. Check access
     const r2 = await jsonp({ action: 'check_access', email: val.email, app: CONFIG.APP_NAME });
+    if (r2.error === 'locked') { showScreen('screenLocked'); return; }
     if (r2.status === 'completed') {
       showScreen('screen-completed');
       return;
     }
 
     // 3. Start eval
-    await jsonp({ action: 'start_eval', email: val.email, app: CONFIG.APP_NAME });
+    const r3 = await jsonp({ action: 'start_eval', email: val.email, app: CONFIG.APP_NAME });
+    if (r3 && r3.error === 'locked') { showScreen('screenLocked'); return; }
 
     // 4. Register app
     postData({
@@ -1437,15 +1505,10 @@ document.getElementById('startBtn').addEventListener('click', async () => {
 
   } catch (err) {
     console.error(err);
-    // Mode dégradé : on continue quand même (utile pour tests locaux)
-    STATE.email = val.email;
-    STATE.classe = 'DEV';
-    STATE.session = new Date().toISOString();
-    STATE.startTime = Date.now();
-    STATE.timerInterval = setInterval(updateTimer, 500);
-    document.getElementById('headerEmail').textContent = val.email + ' (offline)';
-    showScreen('screen-quiz');
-    renderQuiz();
+    errorEl.textContent = 'Erreur de connexion. Vérifiez votre connexion internet et réessayez.';
+    errorEl.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = "Commencer l'évaluation";
   }
 });
 
